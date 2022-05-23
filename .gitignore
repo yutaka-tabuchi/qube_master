@@ -1,0 +1,7 @@
+*~
+/prj
+*.jou
+*.str
+*.log
+/create_prj.tcl
+*.edn

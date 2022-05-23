@@ -1,0 +1,3 @@
+[submodule "time_synch"]
+	path = time_synch
+	url = git@github.com:e-trees/time_synch.git
