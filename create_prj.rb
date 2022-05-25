@@ -10,13 +10,15 @@ def main()
   vivado.set_target("xcu250-figd2104-2L-e")
   vivado.set_board("xilinx.com:au200:part0:1.3")
 
-  vivado.add_sources(["sources/top.vhd"])
+  vivado.add_sources(["sources/top.vhd", "sources/config_memory_wrapper.v"])
   vivado.add_sources(["sources/e7udpip10g_au200.vhd"])
   vivado.add_sources(["lib/e7udpip10G_independent_clk.edn"])
 
   vivado.add_constraints(["sources/top.xdc"])
   vivado.add_testbenchs([])
   vivado.add_ipcores(["ipcores/clk_wiz_0.xci",
+                      "ipcores/config_memory.xci",
+                      "ipcores/ila_config_memory.xci",
                       "ipcores/ila_1.xci",
                       "ipcores/ila_2.xci",
                       "ipcores/xxv_ethernet_0.xci"])

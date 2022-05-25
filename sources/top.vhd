@@ -338,6 +338,37 @@ architecture RTL of top is
       pUdp1Receive_Enable_3  : out std_logic
       );
   end component e7udpip10g_au200;
+
+  component config_memory_wrapper
+    port (
+      clk : in std_logic;
+      reset : in std_logic;
+			     
+      MYIPADDR0_o : out std_logic_vector(31 downto 0);
+      MYNETMASK0_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY0_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR0_o : out std_logic_vector(31 downto 0);
+      MYMACADDR0_o : out std_logic_vector(47 downto 0);
+      
+      MYIPADDR1_o : out std_logic_vector(31 downto 0);
+      MYNETMASK1_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY1_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR1_o : out std_logic_vector(31 downto 0);
+      MYMACADDR1_o : out std_logic_vector(47 downto 0);
+
+      MYIPADDR2_o : out std_logic_vector(31 downto 0);
+      MYNETMASK2_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY2_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR2_o : out std_logic_vector(31 downto 0);
+      MYMACADDR2_o : out std_logic_vector(47 downto 0);
+
+      MYIPADDR3_o : out std_logic_vector(31 downto 0);
+      MYNETMASK3_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY3_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR3_o : out std_logic_vector(31 downto 0);
+      MYMACADDR3_o : out std_logic_vector(47 downto 0)
+      );
+  end component config_memory_wrapper;
   
   signal rx_block_lock_led_0 : std_logic;
   signal rx_block_lock_led_1 : std_logic;
@@ -347,6 +378,7 @@ architecture RTL of top is
   signal clk250mhz : std_logic;
   signal clk100mhz : std_logic;
   signal clk_locked : std_logic;
+  signal sys_reset : std_logic;
 
 begin
 
@@ -365,6 +397,7 @@ begin
     clk_in1_p => SYSCLK3_P,
     clk_in1_n => SYSCLK3_N
     );
+  sys_reset <= not clk_locked;
 
   pUdp0Send_Data_0    <= pUdp0Receive_Data_0;
   pUdp0Send_Request_0 <= pUdp0Receive_Request_0;
@@ -406,35 +439,45 @@ begin
   pUdp1Receive_Ack_3  <= pUdp1Send_Ack_3;
   pUdp1Send_Enable_3  <= pUdp1Receive_Enable_3;
 
-  MyIpAddr_0       <= X"0a020020";
-  MyMacAddr_0      <= X"000102030405";
-  MyNetMask_0      <= X"ff000000";
-  DefaultGateway_0 <= X"0a000001";
-  TargetIPAddr_0   <= X"0a000001";
+
+  config_memory_wrapper_i : config_memory_wrapper port map(
+    clk => clk250mhz,
+    reset => sys_reset,
+			     
+    MYIPADDR0_o => MyIpAddr_0,
+    MYNETMASK0_o => MyNetMask_0,
+    MYDEFAULTGATEWAY0_o => DefaultGateway_0,
+    MYTARGETIPADDR0_o => TargetIPAddr_0,
+    MYMACADDR0_o => MyMacAddr_0,
+      
+    MYIPADDR1_o => MyIPAddr_1,
+    MYNETMASK1_o => MyNetMask_1,
+    MYDEFAULTGATEWAY1_o => DefaultGateway_1,
+    MYTARGETIPADDR1_o => TargetIPAddr_1,
+    MYMACADDR1_o => MyNetMask_1,
+
+    MYIPADDR2_o => MyIPAddr_2,
+    MYNETMASK2_o => MyNetMask_2,
+    MYDEFAULTGATEWAY2_o => DefaultGateway_2,
+    MYTARGETIPADDR2_o => TargetIPAddr_2,
+    MYMACADDR2_o => MyNetMask_2,
+
+    MYIPADDR3_o => MyIPAddr_3,
+    MYNETMASK3_o => MyNetMask_3,
+    MYDEFAULTGATEWAY3_o => DefaultGateway_3,
+    MYTARGETIPADDR3_o => TargetIPAddr_3,
+    MYMACADDR3_o => MyNetMask_3
+    );
+  
   MyUdpPort_0_0    <= X"4000";
   MyUdpPort_0_1    <= X"4001";
 
-  MyIpAddr_1       <= X"0a020021";
-  MyMacAddr_1      <= X"000102030406";
-  MyNetMask_1      <= X"ff000000";
-  DefaultGateway_1 <= X"0a000001";
-  TargetIPAddr_1   <= X"0a000001";
   MyUdpPort_1_0    <= X"4000";
   MyUdpPort_1_1    <= X"4001";
 
-  MyIpAddr_2       <= X"0a020022";
-  MyMacAddr_2      <= X"000102030407";
-  MyNetMask_2      <= X"ff000000";
-  DefaultGateway_2 <= X"0a000001";
-  TargetIPAddr_2   <= X"0a000001";
   MyUdpPort_2_0    <= X"4000";
   MyUdpPort_2_1    <= X"4001";
 
-  MyIpAddr_3       <= X"0a020023";
-  MyMacAddr_3      <= X"000102030408";
-  MyNetMask_3      <= X"ff000000";
-  DefaultGateway_3 <= X"0a000001";
-  TargetIPAddr_3   <= X"0a000001";
   MyUdpPort_3_0    <= X"4000";
   MyUdpPort_3_1    <= X"4001";
   
