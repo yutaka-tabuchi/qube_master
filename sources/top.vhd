@@ -454,19 +454,19 @@ begin
     MYNETMASK1_o => MyNetMask_1,
     MYDEFAULTGATEWAY1_o => DefaultGateway_1,
     MYTARGETIPADDR1_o => TargetIPAddr_1,
-    MYMACADDR1_o => MyNetMask_1,
+    MYMACADDR1_o => MyMacAddr_1,
 
     MYIPADDR2_o => MyIPAddr_2,
     MYNETMASK2_o => MyNetMask_2,
     MYDEFAULTGATEWAY2_o => DefaultGateway_2,
     MYTARGETIPADDR2_o => TargetIPAddr_2,
-    MYMACADDR2_o => MyNetMask_2,
+    MYMACADDR2_o => MyMacAddr_2,
 
     MYIPADDR3_o => MyIPAddr_3,
     MYNETMASK3_o => MyNetMask_3,
     MYDEFAULTGATEWAY3_o => DefaultGateway_3,
     MYTARGETIPADDR3_o => TargetIPAddr_3,
-    MYMACADDR3_o => MyNetMask_3
+    MYMACADDR3_o => MyMacAddr_3
     );
   
   MyUdpPort_0_0    <= X"4000";
