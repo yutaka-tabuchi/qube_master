@@ -5,3 +5,4 @@
 *.log
 /create_prj.tcl
 *.edn
+.Xil

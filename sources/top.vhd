@@ -25,6 +25,7 @@ end entity top;
 architecture RTL of top is
 
   attribute keep : string;
+  attribute mark_debug : string;
   
   component clk_wiz_0
     port (
@@ -196,7 +197,7 @@ architecture RTL of top is
       clk   : in std_logic;
       reset : in std_logic;
 
-      clk_in : in std_logic_vector(63 downto 0);
+      clock_in : in std_logic_vector(63 downto 0);
 
       UPLOut_data : out std_logic_vector(127 downto 0);
       UPLOut_en   : out std_logic;
@@ -370,6 +371,30 @@ architecture RTL of top is
       );
   end component config_memory_wrapper;
   
+  component command_parser
+    port (
+      clk : in std_logic;
+      reset : in std_logic;
+      
+      UPLOut_data : out std_logic_vector(127 downto 0);
+      UPLOut_en   : out std_logic;
+      UPLOut_req  : out std_logic;
+      UPLOut_ack  : in  std_logic;
+      
+      UPLIn_data : in  std_logic_vector(127 downto 0);
+      UPLIn_en   : in  std_logic;
+      UPLIn_req  : in  std_logic;
+      UPLIn_ack  : out std_logic;
+      
+      synch_sender_kick : out std_logic;
+      synch_sender_busy : in  std_logic;
+      synch_target_addr : out std_logic_vector(31 downto 0);
+      
+      global_clock       : in  std_logic_vector(63 downto 0);
+      global_clock_clear : out std_logic
+      );
+  end component command_parser;
+
   signal rx_block_lock_led_0 : std_logic;
   signal rx_block_lock_led_1 : std_logic;
   signal rx_block_lock_led_2 : std_logic;
@@ -379,6 +404,40 @@ architecture RTL of top is
   signal clk100mhz : std_logic;
   signal clk_locked : std_logic;
   signal sys_reset : std_logic;
+
+  signal global_clock         : unsigned(63 downto 0);
+  signal global_clock_clear   : std_logic := '0';
+  signal global_clock_clear_d : std_logic := '0';
+          
+  signal synch_sender_out_data : std_logic_vector(127 downto 0);
+  signal synch_sender_out_en   : std_logic;
+  signal synch_sender_out_req  : std_logic;
+  signal synch_sender_out_ack  : std_logic;
+  signal synch_sender_in_data  : std_logic_vector(127 downto 0);
+  signal synch_sender_in_en    : std_logic;
+  signal synch_sender_in_req   : std_logic;
+  signal synch_sender_in_ack   : std_logic;
+
+  signal synch_sender_kick : std_logic;
+  signal synch_sender_busy : std_logic;
+  signal synch_target_addr : std_logic_vector(31 downto 0);
+
+  signal user_upl_out_data : std_logic_vector(127 downto 0);
+  signal user_upl_out_en   : std_logic;
+  signal user_upl_out_req  : std_logic;
+  signal user_upl_out_ack  : std_logic;
+      
+  signal user_upl_in_data : std_logic_vector(127 downto 0);
+  signal user_upl_in_en   : std_logic;
+  signal user_upl_in_req  : std_logic;
+  signal user_upl_in_ack  : std_logic;
+
+  attribute mark_debug of global_clock         : signal is "true";
+  attribute mark_debug of global_clock_clear   : signal is "true";
+  attribute mark_debug of global_clock_clear_d : signal is "true";
+  attribute mark_debug of synch_sender_kick    : signal is "true";
+  attribute mark_debug of synch_sender_busy    : signal is "true";
+  attribute mark_debug of synch_target_addr    : signal is "true";
 
 begin
 
@@ -399,11 +458,17 @@ begin
     );
   sys_reset <= not clk_locked;
 
-  pUdp0Send_Data_0    <= pUdp0Receive_Data_0;
-  pUdp0Send_Request_0 <= pUdp0Receive_Request_0;
-  pUdp0Receive_Ack_0  <= pUdp0Send_Ack_0;
-  pUdp0Send_Enable_0  <= pUdp0Receive_Enable_0;
-  
+  -- 10.3.X.X, 16'h4000
+  user_upl_in_data   <= pUdp0Receive_Data_0;
+  user_upl_in_req    <= pUdp0Receive_Request_0;
+  pUdp0Receive_Ack_0 <= user_upl_in_ack;
+  user_upl_in_en     <= pUdp0Receive_Enable_0;
+
+  pUdp0Send_Data_0    <= user_upl_out_data;
+  pUdp0Send_Request_0 <= user_upl_out_req;
+  user_upl_out_ack    <= pUdp0Send_Ack_0;
+  pUdp0Send_Enable_0  <= user_upl_out_en;
+
   pUdp1Send_Data_0    <= pUdp1Receive_Data_0;
   pUdp1Send_Request_0 <= pUdp1Receive_Request_0;
   pUdp1Receive_Ack_0  <= pUdp1Send_Ack_0;
@@ -439,36 +504,67 @@ begin
   pUdp1Receive_Ack_3  <= pUdp1Send_Ack_3;
   pUdp1Send_Enable_3  <= pUdp1Receive_Enable_3;
 
+  process(clk250mhz)
+  begin
+    if rising_edge(clk250mhz) then
+      global_clock_clear_d <= global_clock_clear;
+      if global_clock_clear = '1' and global_clock_clear_d = '0' then
+        global_clock <= (others => '0');
+      else
+        global_clock <= global_clock + 1;
+      end if;
+    end if;
+  end process;
 
-  config_memory_wrapper_i : config_memory_wrapper port map(
-    clk => clk250mhz,
-    reset => sys_reset,
-			     
-    MYIPADDR0_o => MyIpAddr_0,
-    MYNETMASK0_o => MyNetMask_0,
-    MYDEFAULTGATEWAY0_o => DefaultGateway_0,
-    MYTARGETIPADDR0_o => TargetIPAddr_0,
-    MYMACADDR0_o => MyMacAddr_0,
+  synch_sender_i : synch_sender
+    port map(
+      clk => clk250mhz,
+      reset => sys_reset,
+
+      clock_in => std_logic_vector(global_clock),
+
+      UPLOut_data => synch_sender_out_data,
+      UPLOut_en   => synch_sender_out_en,
+      UPLOut_req  => synch_sender_out_req,
+      UPLOut_ack  => synch_sender_out_ack,
       
-    MYIPADDR1_o => MyIPAddr_1,
-    MYNETMASK1_o => MyNetMask_1,
-    MYDEFAULTGATEWAY1_o => DefaultGateway_1,
-    MYTARGETIPADDR1_o => TargetIPAddr_1,
-    MYMACADDR1_o => MyMacAddr_1,
+      UPLIn_data => synch_sender_in_data,
+      UPLIn_en   => synch_sender_in_en,
+      UPLIn_req  => synch_sender_in_req,
+      UPLIn_ack  => synch_sender_in_ack,
 
-    MYIPADDR2_o => MyIPAddr_2,
-    MYNETMASK2_o => MyNetMask_2,
-    MYDEFAULTGATEWAY2_o => DefaultGateway_2,
-    MYTARGETIPADDR2_o => TargetIPAddr_2,
-    MYMACADDR2_o => MyMacAddr_2,
+      kick => synch_sender_kick,
+      busy => synch_sender_busy,
 
-    MYIPADDR3_o => MyIPAddr_3,
-    MYNETMASK3_o => MyNetMask_3,
-    MYDEFAULTGATEWAY3_o => DefaultGateway_3,
-    MYTARGETIPADDR3_o => TargetIPAddr_3,
-    MYMACADDR3_o => MyMacAddr_3
-    );
+      src_addr => MyIPAddr_1,
+      dst_addr => synch_target_addr,
+      src_port => MyUdpPort_1_1,
+      dst_port => MyUdpPort_1_1
+      );
   
+  command_parser_i : command_parser
+    port map(
+      clk => clk250mhz,
+      reset => sys_reset,
+      
+      UPLOut_data => user_upl_out_data,
+      UPLOut_en   => user_upl_out_en,
+      UPLOut_req  => user_upl_out_req,
+      UPLOut_ack  => user_upl_out_ack,
+      
+      UPLIn_data => user_upl_in_data,
+      UPLIn_en   => user_upl_in_en,
+      UPLIn_req  => user_upl_in_req,
+      UPLIn_ack  => user_upl_in_ack,
+      
+      synch_sender_kick => synch_sender_kick,
+      synch_sender_busy => synch_sender_busy,
+      synch_target_addr => synch_target_addr,
+      
+      global_clock => std_logic_vector(global_clock),
+      global_clock_clear => global_clock_clear
+      );
+
   MyUdpPort_0_0    <= X"4000";
   MyUdpPort_0_1    <= X"4001";
 
@@ -637,6 +733,35 @@ begin
     probe7(128)          => pUdp1Send_Request_3,
     probe7(129)          => pUdp1Send_Ack_3,
     probe7(130)          => pUdp1Send_Enable_3
+    );
+
+  config_memory_wrapper_i : config_memory_wrapper port map(
+    clk => clk250mhz,
+    reset => sys_reset,
+			     
+    MYIPADDR0_o => MyIpAddr_0,
+    MYNETMASK0_o => MyNetMask_0,
+    MYDEFAULTGATEWAY0_o => DefaultGateway_0,
+    MYTARGETIPADDR0_o => TargetIPAddr_0,
+    MYMACADDR0_o => MyMacAddr_0,
+      
+    MYIPADDR1_o => MyIPAddr_1,
+    MYNETMASK1_o => MyNetMask_1,
+    MYDEFAULTGATEWAY1_o => DefaultGateway_1,
+    MYTARGETIPADDR1_o => TargetIPAddr_1,
+    MYMACADDR1_o => MyMacAddr_1,
+
+    MYIPADDR2_o => MyIPAddr_2,
+    MYNETMASK2_o => MyNetMask_2,
+    MYDEFAULTGATEWAY2_o => DefaultGateway_2,
+    MYTARGETIPADDR2_o => TargetIPAddr_2,
+    MYMACADDR2_o => MyMacAddr_2,
+
+    MYIPADDR3_o => MyIPAddr_3,
+    MYNETMASK3_o => MyNetMask_3,
+    MYDEFAULTGATEWAY3_o => DefaultGateway_3,
+    MYTARGETIPADDR3_o => TargetIPAddr_3,
+    MYMACADDR3_o => MyMacAddr_3
     );
 
 end RTL;
