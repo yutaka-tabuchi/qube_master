@@ -39,6 +39,7 @@ architecture BEHAV of command_parser_tb is
       synch_target_addr : out std_logic_vector(32-1 downto 0);
       global_clock : in std_logic_vector(64-1 downto 0);
       global_clock_clear : out std_logic;
+      global_clock_set_value : out std_logic_vector(64-1 downto 0);
       
       -- system clock and reset
       clk : in std_logic;
@@ -67,6 +68,7 @@ architecture BEHAV of command_parser_tb is
   signal synch_target_addr       : std_logic_vector(32-1 downto 0) := (others => '0');
   signal global_clock            : std_logic_vector(64-1 downto 0) := (others => '0');
   signal global_clock_clear      : std_logic;
+  signal global_clock_set_value  : std_logic_vector(64-1 downto 0);
   signal clk                     : std_logic := '0';
   signal reset                   : std_logic := '0';
 
@@ -86,7 +88,7 @@ begin
       counter <= counter + 1;
       
       if global_clock_clear = '1' then
-        global_clock <= (others => '0');
+        global_clock <= unsigned(global_clock_set_value);
       else
         global_clock <= std_logic_vector(unsigned(global_clock) + 1);
       end if;

@@ -51,6 +51,20 @@ architecture RTL of top is
       probe7 : in std_logic_vector(130 downto 0)
       );
   end component ila_1;
+
+  component ila_0
+    port (
+      clk : in std_logic;
+      probe0 : in std_logic_vector(63 downto 0);
+      probe1 : in std_logic_vector(0 downto 0);
+      probe2 : in std_logic_vector(0 downto 0);
+      probe3 : in std_logic_vector(63 downto 0);
+      probe4 : in std_logic_vector(0 downto 0);
+      probe5 : in std_logic_vector(0 downto 0);
+      probe6 : in std_logic_vector(31 downto 0);
+      probe7 : in std_logic_vector(15 downto 0)
+      );
+  end component ila_0;
   
   signal pUdp0Send_Data_0    : std_logic_vector(127 downto 0);
   signal pUdp0Send_Request_0 : std_logic;
@@ -372,26 +386,43 @@ architecture RTL of top is
   end component config_memory_wrapper;
   
   component command_parser
-    port (
-      clk : in std_logic;
-      reset : in std_logic;
+    port(
+      -- input
+      UPL_input_data : in std_logic_vector(128-1 downto 0);
+      UPL_input_en : in std_logic;
+      UPL_input_req : in std_logic;
+      UPL_input_ack : out std_logic;
       
-      UPLOut_data : out std_logic_vector(127 downto 0);
-      UPLOut_en   : out std_logic;
-      UPLOut_req  : out std_logic;
-      UPLOut_ack  : in  std_logic;
+      -- forward_input
+      UPL_forward_input_data : in std_logic_vector(128-1 downto 0);
+      UPL_forward_input_en : in std_logic;
+      UPL_forward_input_req : in std_logic;
+      UPL_forward_input_ack : out std_logic;
       
-      UPLIn_data : in  std_logic_vector(127 downto 0);
-      UPLIn_en   : in  std_logic;
-      UPLIn_req  : in  std_logic;
-      UPLIn_ack  : out std_logic;
+      -- output
+      UPL_output_data : out std_logic_vector(128-1 downto 0);
+      UPL_output_en : out std_logic;
+      UPL_output_req : out std_logic;
+      UPL_output_ack : in std_logic;
       
+      -- forward_output
+      UPL_forward_output_data : out std_logic_vector(128-1 downto 0);
+      UPL_forward_output_en : out std_logic;
+      UPL_forward_output_req : out std_logic;
+      UPL_forward_output_ack : in std_logic;
+      
+      -- user-defiend ports
       synch_sender_kick : out std_logic;
-      synch_sender_busy : in  std_logic;
-      synch_target_addr : out std_logic_vector(31 downto 0);
+      synch_sender_busy : in std_logic;
+      synch_target_addr : out std_logic_vector(32-1 downto 0);
+      synch_target_port : out std_logic_vector(16-1 downto 0);
+      global_clock : in std_logic_vector(64-1 downto 0);
+      global_clock_clear : out std_logic;
+      global_clock_set_value : out std_logic_vector(64-1 downto 0);
       
-      global_clock       : in  std_logic_vector(63 downto 0);
-      global_clock_clear : out std_logic
+      -- system clock and reset
+      clk : in std_logic;
+      reset : in std_logic
       );
   end component command_parser;
 
@@ -405,10 +436,11 @@ architecture RTL of top is
   signal clk_locked : std_logic;
   signal sys_reset : std_logic;
 
-  signal global_clock         : unsigned(63 downto 0);
-  signal global_clock_clear   : std_logic := '0';
-  signal global_clock_clear_d : std_logic := '0';
-          
+  signal global_clock           : unsigned(63 downto 0);
+  signal global_clock_clear     : std_logic := '0';
+  signal global_clock_clear_d   : std_logic := '0';
+  signal global_clock_set_value : std_logic_vector(63 downto 0);
+    
   signal synch_sender_out_data : std_logic_vector(127 downto 0);
   signal synch_sender_out_en   : std_logic;
   signal synch_sender_out_req  : std_logic;
@@ -421,6 +453,7 @@ architecture RTL of top is
   signal synch_sender_kick : std_logic;
   signal synch_sender_busy : std_logic;
   signal synch_target_addr : std_logic_vector(31 downto 0);
+  signal synch_target_port : std_logic_vector(15 downto 0);
 
   signal user_upl_out_data : std_logic_vector(127 downto 0);
   signal user_upl_out_en   : std_logic;
@@ -432,12 +465,24 @@ architecture RTL of top is
   signal user_upl_in_req  : std_logic;
   signal user_upl_in_ack  : std_logic;
 
-  attribute mark_debug of global_clock         : signal is "true";
-  attribute mark_debug of global_clock_clear   : signal is "true";
-  attribute mark_debug of global_clock_clear_d : signal is "true";
-  attribute mark_debug of synch_sender_kick    : signal is "true";
-  attribute mark_debug of synch_sender_busy    : signal is "true";
-  attribute mark_debug of synch_target_addr    : signal is "true";
+  attribute mark_debug of global_clock           : signal is "true";
+  attribute mark_debug of global_clock_clear     : signal is "true";
+  attribute mark_debug of global_clock_clear_d   : signal is "true";
+  attribute mark_debug of global_clock_set_value : signal is "true";
+  attribute mark_debug of synch_sender_kick      : signal is "true";
+  attribute mark_debug of synch_sender_busy      : signal is "true";
+  attribute mark_debug of synch_target_addr      : signal is "true";
+  attribute mark_debug of synch_target_port      : signal is "true";
+
+  signal forward_input_data : std_logic_vector(127 downto 0);
+  signal forward_input_en   : std_logic;
+  signal forward_input_req  : std_logic;
+  signal forward_input_ack  : std_logic;
+  
+  signal forward_output_data : std_logic_vector(127 downto 0);
+  signal forward_output_en   : std_logic;
+  signal forward_output_req  : std_logic;
+  signal forward_output_ack  : std_logic;
 
 begin
 
@@ -458,6 +503,7 @@ begin
     );
   sys_reset <= not clk_locked;
 
+  ----------------------------------------------------
   -- 10.3.X.X, 16'h4000
   user_upl_in_data   <= pUdp0Receive_Data_0;
   user_upl_in_req    <= pUdp0Receive_Request_0;
@@ -469,49 +515,77 @@ begin
   user_upl_out_ack    <= pUdp0Send_Ack_0;
   pUdp0Send_Enable_0  <= user_upl_out_en;
 
+  -- 10.3.X.X, 16'h4001
   pUdp1Send_Data_0    <= pUdp1Receive_Data_0;
   pUdp1Send_Request_0 <= pUdp1Receive_Request_0;
   pUdp1Receive_Ack_0  <= pUdp1Send_Ack_0;
   pUdp1Send_Enable_0  <= pUdp1Receive_Enable_0;
+  ----------------------------------------------------
 
-  pUdp0Send_Data_1    <= pUdp0Receive_Data_1;
-  pUdp0Send_Request_1 <= pUdp0Receive_Request_1;
-  pUdp0Receive_Ack_1  <= pUdp0Send_Ack_1;
-  pUdp0Send_Enable_1  <= pUdp0Receive_Enable_1;
+  ----------------------------------------------------
+  -- 10.4.X.X, 16'h4000
+  forward_input_data <= pUdp0Receive_Data_1;
+  forward_input_req  <= pUdp0Receive_Request_1;
+  pUdp0Receive_Ack_1 <= forward_input_ack;
+  forward_input_en   <= pUdp0Receive_Enable_1;
   
-  pUdp1Send_Data_1    <= pUdp1Receive_Data_1;
-  pUdp1Send_Request_1 <= pUdp1Receive_Request_1;
-  pUdp1Receive_Ack_1  <= pUdp1Send_Ack_1;
-  pUdp1Send_Enable_1  <= pUdp1Receive_Enable_1;
+  pUdp0Send_Data_1    <= forward_output_data;
+  pUdp0Send_Request_1 <= forward_output_req;
+  forward_output_ack  <= pUdp0Send_Ack_1;
+  pUdp0Send_Enable_1  <= forward_output_en;
+  
+  -- 10.4.X.X, 16'h4001
+  synch_sender_in_data <= pUdp1Receive_Data_1;
+  synch_sender_in_req  <= pUdp1Receive_Request_1;
+  pUdp1Receive_Ack_1   <= synch_sender_in_ack;
+  synch_sender_in_en   <= pUdp1Receive_Enable_1;
 
+  pUdp1Send_Data_1     <= synch_sender_out_data;
+  pUdp1Send_Request_1  <= synch_sender_out_req;
+  synch_sender_out_ack <= pUdp1Send_Ack_1;
+  pUdp1Send_Enable_1   <= synch_sender_out_en;
+  ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.254.X.X, 16'h4000
   pUdp0Send_Data_2    <= pUdp0Receive_Data_2;
   pUdp0Send_Request_2 <= pUdp0Receive_Request_2;
   pUdp0Receive_Ack_2  <= pUdp0Send_Ack_2;
   pUdp0Send_Enable_2  <= pUdp0Receive_Enable_2;
   
+  -- 10.254.X.X, 16'h4001
   pUdp1Send_Data_2    <= pUdp1Receive_Data_2;
   pUdp1Send_Request_2 <= pUdp1Receive_Request_2;
   pUdp1Receive_Ack_2  <= pUdp1Send_Ack_2;
   pUdp1Send_Enable_2  <= pUdp1Receive_Enable_2;
+  ----------------------------------------------------
 
+  ----------------------------------------------------
+  -- 10.255.X.X, 16'h4000
   pUdp0Send_Data_3    <= pUdp0Receive_Data_3;
   pUdp0Send_Request_3 <= pUdp0Receive_Request_3;
   pUdp0Receive_Ack_3  <= pUdp0Send_Ack_3;
   pUdp0Send_Enable_3  <= pUdp0Receive_Enable_3;
   
+  -- 10.254.X.X, 16'h4001
   pUdp1Send_Data_3    <= pUdp1Receive_Data_3;
   pUdp1Send_Request_3 <= pUdp1Receive_Request_3;
   pUdp1Receive_Ack_3  <= pUdp1Send_Ack_3;
   pUdp1Send_Enable_3  <= pUdp1Receive_Enable_3;
+  ----------------------------------------------------
 
   process(clk250mhz)
   begin
     if rising_edge(clk250mhz) then
-      global_clock_clear_d <= global_clock_clear;
-      if global_clock_clear = '1' and global_clock_clear_d = '0' then
+      if sys_reset = '1' then
         global_clock <= (others => '0');
       else
-        global_clock <= global_clock + 1;
+        global_clock_clear_d <= global_clock_clear;
+        if global_clock_clear = '1' and global_clock_clear_d = '0' then -- rising of global_clock_clear
+          global_clock <= unsigned(global_clock_set_value);
+        else
+          global_clock <= global_clock + 1;
+        end if;
       end if;
     end if;
   end process;
@@ -539,30 +613,47 @@ begin
       src_addr => MyIPAddr_1,
       dst_addr => synch_target_addr,
       src_port => MyUdpPort_1_1,
-      dst_port => MyUdpPort_1_1
+      dst_port => synch_target_port
       );
   
   command_parser_i : command_parser
     port map(
-      clk => clk250mhz,
-      reset => sys_reset,
-      
-      UPLOut_data => user_upl_out_data,
-      UPLOut_en   => user_upl_out_en,
-      UPLOut_req  => user_upl_out_req,
-      UPLOut_ack  => user_upl_out_ack,
-      
-      UPLIn_data => user_upl_in_data,
-      UPLIn_en   => user_upl_in_en,
-      UPLIn_req  => user_upl_in_req,
-      UPLIn_ack  => user_upl_in_ack,
-      
-      synch_sender_kick => synch_sender_kick,
-      synch_sender_busy => synch_sender_busy,
-      synch_target_addr => synch_target_addr,
-      
-      global_clock => std_logic_vector(global_clock),
-      global_clock_clear => global_clock_clear
+      -- input
+      UPL_input_data => user_upl_in_data,
+      UPL_input_en   => user_upl_in_en,
+      UPL_input_req  => user_upl_in_req,
+      UPL_input_ack  => user_upl_in_ack,
+
+      -- forward_input
+      UPL_forward_input_data => forward_input_data,
+      UPL_forward_input_en   => forward_input_en,
+      UPL_forward_input_req  => forward_input_req,
+      UPL_forward_input_ack  => forward_input_ack,
+
+      -- output
+      UPL_output_data => user_upl_out_data,
+      UPL_output_en   => user_upl_out_en,
+      UPL_output_req  => user_upl_out_req,
+      UPL_output_ack  => user_upl_out_ack,
+
+      -- forward_output
+      UPL_forward_output_data => forward_output_data,
+      UPL_forward_output_en   => forward_output_en,
+      UPL_forward_output_req  => forward_output_req,
+      UPL_forward_output_ack  => forward_output_ack,
+
+      -- user-defiend ports
+      synch_sender_kick      => synch_sender_kick,
+      synch_sender_busy      => synch_sender_busy,
+      synch_target_addr      => synch_target_addr,
+      synch_target_port      => synch_target_port,
+      global_clock           => std_logic_vector(global_clock),
+      global_clock_clear     => global_clock_clear,
+      global_clock_set_value => global_clock_set_value,
+
+      -- system clock and reset
+      clk   => clk250mhz,
+      reset => sys_reset
       );
 
   MyUdpPort_0_0    <= X"4000";
@@ -733,6 +824,18 @@ begin
     probe7(128)          => pUdp1Send_Request_3,
     probe7(129)          => pUdp1Send_Ack_3,
     probe7(130)          => pUdp1Send_Enable_3
+    );
+
+  ila_0_i : ila_0 port map(
+    clk       => clk250mhz,
+    probe0    => std_logic_vector(global_clock),
+    probe1(0) => global_clock_clear,
+    probe2(0) => global_clock_clear_d,
+    probe3    => global_clock_set_value,
+    probe4(0) => synch_sender_kick,
+    probe5(0) => synch_sender_busy,
+    probe6    => synch_target_addr,
+    probe7    => synch_target_port
     );
 
   config_memory_wrapper_i : config_memory_wrapper port map(

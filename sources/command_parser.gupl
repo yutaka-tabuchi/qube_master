@@ -45,12 +45,13 @@
 @END
 
 @PORT
-  synch_sender_kick , 0 , out
-  synch_sender_busy , 0 , in
+  synch_sender_kick ,  0, out
+  synch_sender_busy ,  0, in
   synch_target_addr , 32, out
   synch_target_port , 16, out
   global_clock      , 64, in
-  global_clock_clear, 0 , out
+  global_clock_clear,  0, out
+  global_clock_set_value, 64, out
 @END
 
 @LOCAL
@@ -157,6 +158,14 @@
 
 @STAGE clear_clock
   global_clock_clear <= '1';
+  global_clock_set_value(63 downto 56) <= data1( 7 downto  0);
+  global_clock_set_value(55 downto 48) <= data1(15 downto  8);
+  global_clock_set_value(47 downto 40) <= data1(23 downto 16);
+  global_clock_set_value(39 downto 32) <= data1(31 downto 24);
+  global_clock_set_value(31 downto 24) <= data0( 7 downto  0);
+  global_clock_set_value(23 downto 16) <= data0(15 downto  8);
+  global_clock_set_value(15 downto  8) <= data0(23 downto 16);
+  global_clock_set_value( 7 downto  0) <= data0(31 downto 24);
   @to send_reply
 @END
   

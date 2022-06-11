@@ -13,16 +13,19 @@ def main()
   vivado.add_sources(["sources/top.vhd",
                       "sources/sources/command_parser.vhd",
                       "sources/config_memory_wrapper.v",
-                      "time_synch/synch_sender.sv"])
+                      "sources/simple_dualportram.vhd",
+                      "time_synch/synch_sender.sv",
+                      "time_synch/synch_pkg.vh",
+                     ])
   vivado.add_sources(["sources/e7udpip10g_au200.vhd"])
   vivado.add_sources(["lib/e7udpip10G_independent_clk.edn"])
 
   vivado.add_constraints(["sources/top.xdc"])
   vivado.add_testbenchs([])
   vivado.add_ipcores(["ipcores/clk_wiz_0.xci",
-                      "ipcores/blk_mem_gen_0.xci",
                       "ipcores/config_memory.xci",
                       "ipcores/ila_config_memory.xci",
+                      "ipcores/ila_0.xci",
                       "ipcores/ila_1.xci",
                       "ipcores/ila_2.xci",
                       "ipcores/xxv_ethernet_0.xci"])
