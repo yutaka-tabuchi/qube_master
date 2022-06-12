@@ -16,7 +16,7 @@ class QuBEMasterClient(object):
         self.__sock.bind(('', 0))
         print('open: {}:{}'.format(ip_addr, port))
 
-    def send_recv(self, addr, data):
+    def send_recv(self, data):
         try:
             self.__sock.sendto(data, self.__dest_addr)
             return self.__sock.recvfrom(self.BUFSIZE)
@@ -27,34 +27,40 @@ class QuBEMasterClient(object):
             print(e)
             raise
 
-    def kick_clock_synch(self, addr, targets):
+    def kick_clock_synch(self, targets):
         data = struct.pack('BB', 0x32, 0)
         data += struct.pack('HHH', 0, 0, 0)
-        for t in targets:
-            data += struct.pack('>I', t)
+        for addr,port in targets:
+            print("kick: 0x{:0=8x}:{}".format(addr, port))
+            data += struct.pack('>I', addr)
+            data += struct.pack('>I', port)
         print(data)
-        return self.send_recv(addr, data)
+        return self.send_recv(data)
 
-    def clear_clock(self, addr, value=0):
+    def clear_clock(self, value=0):
         data = struct.pack('BB', 0x34, 0)
         data += struct.pack('HHH', 0, 0, 0)
         data += struct.pack('<Q', value)
         print(data)
-        return self.send_recv(addr, data)
+        return self.send_recv(data)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--ipaddr', default='10.3.0.255')
     parser.add_argument('--port', type=int, default='16384')
     parser.add_argument('--command', default='')
+    parser.add_argument('--value', type=int, default=0)
     args = parser.parse_args()
 
     client = QuBEMasterClient(args.ipaddr, int(args.port))
     if args.command == 'clear':
-        r, a = client.clear_clock('127.0.0.1', value=0x0123456789abcdef)
+        r, a = client.clear_clock(value=args.value)
         print(r, a)
     elif args.command == 'kick':
-        r, a = client.kick_clock_synch('127.0.0.1', [0x0a020014])
+        r, a = client.kick_clock_synch([[0x0a020013, 0x4001], [0x0a020014, 0x4001]])
+        #r, a = client.kick_clock_synch([[0x0a020013, 0x4001]])
+        #r, a = client.kick_clock_synch([[0x0a020014, 0x4001]])
+        print(r, a)
     else:
         parser.print_help()
         sys.exit(0)
