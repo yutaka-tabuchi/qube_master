@@ -3,6 +3,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library xpm;
+use xpm.vcomponents.all;
+
 entity top is
   port(
     gt_rxp_in : in std_logic_vector(4-1 downto 0);
@@ -31,6 +34,7 @@ architecture RTL of top is
     port (
       clk_out1  : out std_logic;
       clk_out2  : out std_logic;
+      clk_out3  : out std_logic;
       reset     : in  std_logic;
       locked    : out std_logic;
       clk_in1_p : in  std_logic;
@@ -56,13 +60,12 @@ architecture RTL of top is
     port (
       clk : in std_logic;
       probe0 : in std_logic_vector(63 downto 0);
-      probe1 : in std_logic_vector(0 downto 0);
-      probe2 : in std_logic_vector(0 downto 0);
-      probe3 : in std_logic_vector(63 downto 0);
+      probe1 : in std_logic_vector(2 downto 0);
+      probe2 : in std_logic_vector(63 downto 0);
+      probe3 : in std_logic_vector(0 downto 0);
       probe4 : in std_logic_vector(0 downto 0);
-      probe5 : in std_logic_vector(0 downto 0);
-      probe6 : in std_logic_vector(31 downto 0);
-      probe7 : in std_logic_vector(15 downto 0)
+      probe5 : in std_logic_vector(31 downto 0);
+      probe6 : in std_logic_vector(15 downto 0)
       );
   end component ila_0;
   
@@ -433,13 +436,21 @@ architecture RTL of top is
 
   signal clk250mhz : std_logic;
   signal clk100mhz : std_logic;
+  signal clk125mhz : std_logic;
   signal clk_locked : std_logic;
   signal sys_reset : std_logic;
 
-  signal global_clock           : unsigned(63 downto 0);
-  signal global_clock_clear     : std_logic := '0';
-  signal global_clock_clear_d   : std_logic := '0';
-  signal global_clock_set_value : std_logic_vector(63 downto 0);
+  signal global_clock                  : unsigned(63 downto 0);
+  signal global_clock_clear_125mhz     : std_logic;
+  signal global_clock_clear_125mhz_d   : std_logic;
+  signal global_clock_set_value_125mhz : std_logic_vector(63 downto 0);
+  
+  signal global_clock_250mhz      : std_logic_vector(63 downto 0);
+  signal global_clock_clear       : std_logic := '0';
+  signal global_clock_clear_d     : std_logic := '0';
+  signal global_clock_set_value   : std_logic_vector(63 downto 0);
+  signal global_clock_set_value_d : std_logic_vector(63 downto 0);
+  signal global_clock_clear_recv  : std_logic;
     
   signal synch_sender_out_data : std_logic_vector(127 downto 0);
   signal synch_sender_out_en   : std_logic;
@@ -465,14 +476,15 @@ architecture RTL of top is
   signal user_upl_in_req  : std_logic;
   signal user_upl_in_ack  : std_logic;
 
-  attribute mark_debug of global_clock           : signal is "true";
-  attribute mark_debug of global_clock_clear     : signal is "true";
-  attribute mark_debug of global_clock_clear_d   : signal is "true";
-  attribute mark_debug of global_clock_set_value : signal is "true";
-  attribute mark_debug of synch_sender_kick      : signal is "true";
-  attribute mark_debug of synch_sender_busy      : signal is "true";
-  attribute mark_debug of synch_target_addr      : signal is "true";
-  attribute mark_debug of synch_target_port      : signal is "true";
+  attribute mark_debug of global_clock_250mhz     : signal is "true";
+  attribute mark_debug of global_clock_clear      : signal is "true";
+  attribute mark_debug of global_clock_clear_d    : signal is "true";
+  attribute mark_debug of global_clock_clear_recv : signal is "true";
+  attribute mark_debug of global_clock_set_value  : signal is "true";
+  attribute mark_debug of synch_sender_kick       : signal is "true";
+  attribute mark_debug of synch_sender_busy       : signal is "true";
+  attribute mark_debug of synch_target_addr       : signal is "true";
+  attribute mark_debug of synch_target_port       : signal is "true";
 
   signal forward_input_data : std_logic_vector(127 downto 0);
   signal forward_input_en   : std_logic;
@@ -496,6 +508,7 @@ begin
   clk_wiz_0_i : clk_wiz_0 port map(
     clk_out1  => clk250mhz,
     clk_out2  => clk100mhz,
+    clk_out3  => clk125mhz,
     reset     => '0',
     locked    => clk_locked,
     clk_in1_p => SYSCLK3_P,
@@ -574,17 +587,64 @@ begin
   pUdp1Send_Enable_3  <= pUdp1Receive_Enable_3;
   ----------------------------------------------------
 
+  process(clk125mhz)
+  begin
+    if rising_edge(clk125mhz) then
+      if sys_reset = '1' then
+        global_clock <= (others => '0');
+      else
+        global_clock_clear_125mhz_d <= global_clock_clear_125mhz;
+        if global_clock_clear_125mhz = '1' and global_clock_clear_125mhz_d = '0' then -- rising of global_clock_clear_125mhz
+          global_clock <= unsigned(global_clock_set_value_125mhz);
+        else
+          global_clock <= global_clock + 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
+  xpm_cdc_array_single_125_to_250 : xpm_cdc_array_single
+    generic map(
+      WIDTH => 64
+      )
+    port map (
+      src_clk => clk125mhz,
+      dest_clk => clk250mhz,
+      src_in => std_logic_vector(global_clock),
+      dest_out => global_clock_250mhz
+      );
+  
+  xpm_cdc_handshake_250_to_125 : xpm_cdc_handshake
+    generic map(
+      DEST_EXT_HSK => 0,
+      DEST_SYNC_FF => 4,
+      INIT_SYNC_FF => 0,
+      SIM_ASSERT_CHK => 0,
+      SRC_SYNC_FF => 4,
+      WIDTH => 64
+      )
+    port map(
+      dest_out => global_clock_set_value_125mhz,
+      dest_req => global_clock_clear_125mhz,
+      src_rcv => global_clock_clear_recv,
+      dest_ack => '0',
+      dest_clk => clk125mhz,
+      src_clk => clk250mhz,
+      src_in => global_clock_set_value_d,
+      src_send => global_clock_clear_d
+      );
+
   process(clk250mhz)
   begin
     if rising_edge(clk250mhz) then
       if sys_reset = '1' then
-        global_clock <= (others => '0');
+        global_clock_clear_d <= '0';
       else
-        global_clock_clear_d <= global_clock_clear;
-        if global_clock_clear = '1' and global_clock_clear_d = '0' then -- rising of global_clock_clear
-          global_clock <= unsigned(global_clock_set_value);
-        else
-          global_clock <= global_clock + 1;
+        if global_clock_clear = '1' and global_clock_clear_recv = '0' then
+          global_clock_clear_d <= '1';
+          global_clock_set_value_d <= global_clock_set_value;
+        elsif global_clock_clear_d = '1' and global_clock_clear_recv = '1' then
+          global_clock_clear_d <= '0';
         end if;
       end if;
     end if;
@@ -595,7 +655,7 @@ begin
       clk => clk250mhz,
       reset => sys_reset,
 
-      clock_in => std_logic_vector(global_clock),
+      clock_in => global_clock_250mhz,
 
       UPLOut_data => synch_sender_out_data,
       UPLOut_en   => synch_sender_out_en,
@@ -647,7 +707,7 @@ begin
       synch_sender_busy      => synch_sender_busy,
       synch_target_addr      => synch_target_addr,
       synch_target_port      => synch_target_port,
-      global_clock           => std_logic_vector(global_clock),
+      global_clock           => global_clock_250mhz,
       global_clock_clear     => global_clock_clear,
       global_clock_set_value => global_clock_set_value,
 
@@ -828,14 +888,13 @@ begin
 
   ila_0_i : ila_0 port map(
     clk       => clk250mhz,
-    probe0    => std_logic_vector(global_clock),
-    probe1(0) => global_clock_clear,
-    probe2(0) => global_clock_clear_d,
-    probe3    => global_clock_set_value,
-    probe4(0) => synch_sender_kick,
-    probe5(0) => synch_sender_busy,
-    probe6    => synch_target_addr,
-    probe7    => synch_target_port
+    probe0    => global_clock_250mhz,
+    probe1    => global_clock_clear & global_clock_clear_d & global_clock_clear_recv,
+    probe2    => global_clock_set_value,
+    probe3(0) => synch_sender_kick,
+    probe4(0) => synch_sender_busy,
+    probe5    => synch_target_addr,
+    probe6    => synch_target_port
     );
 
   config_memory_wrapper_i : config_memory_wrapper port map(
