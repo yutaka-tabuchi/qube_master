@@ -889,7 +889,9 @@ begin
   ila_0_i : ila_0 port map(
     clk       => clk250mhz,
     probe0    => global_clock_250mhz,
-    probe1    => global_clock_clear & global_clock_clear_d & global_clock_clear_recv,
+    probe1(0) => global_clock_clear,
+    probe1(1) => global_clock_clear_d,
+    probe1(2) => global_clock_clear_recv,
     probe2    => global_clock_set_value,
     probe3(0) => synch_sender_kick,
     probe4(0) => synch_sender_busy,

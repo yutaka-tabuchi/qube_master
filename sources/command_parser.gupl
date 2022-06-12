@@ -85,7 +85,8 @@
   elsif command(63 downto 56) = X"36" then
     @TO forward_packet
   else
-    @TO send_reply
+    data_recv_words <= (others => '0'); -- don't send data_recv
+    @to send_reply
   end if;
 
 @END
@@ -103,6 +104,7 @@
     synch_sender_kick_w <= '0';
     if synch_sender_kick_w = '0' and synch_sender_busy = '0' then
       if unsigned(payloadBytes) = 0 then
+        data_recv_words <= (others => '0'); -- don't send data_recv
         @to send_reply
       else
         payloadBytes <= std_logic_vector(unsigned(payloadBytes) - 8);
@@ -118,6 +120,7 @@
     synch_sender_kick_w <= '0';
     if synch_sender_kick_w = '0' and synch_sender_busy = '0' then
       if unsigned(payloadBytes) = 0 then
+        data_recv_words <= (others => '0'); -- don't send data_recv
         @to send_reply
       else
         payloadBytes <= std_logic_vector(unsigned(payloadBytes) - 8);
@@ -129,6 +132,7 @@
     end if;
   when others =>
     synch_sender_kick_w <= '0';
+    data_recv_words <= (others => '0'); -- don't send data_recv
     @to send_reply
   end case;
 
@@ -153,7 +157,8 @@
   payloadBytes <= std_logic_vector(unsigned(fwdPayloadBytes)+16);
   data0 <= fwdDstIpAddr;
   data1 <= X"0000" & fwdDstPort;
-  @SEND forward_output @to IDLE
+  data_recv_words <= (others => '0'); -- don't send data_recv
+  @to send_reply
 @END
 
 @STAGE clear_clock

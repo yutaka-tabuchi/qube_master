@@ -181,6 +181,7 @@ begin
   elsif command(63 downto 56) = X"36" then
           gupl_state <= forward_packet;
   else
+    data_recv_words <= (others => '0'); -- don't send data_recv
           gupl_state <= send_reply;
   end if;
 
@@ -197,6 +198,7 @@ begin
     synch_sender_kick_w <= '0';
     if synch_sender_kick_w = '0' and synch_sender_busy = '0' then
       if unsigned(payloadBytes) = 0 then
+        data_recv_words <= (others => '0'); -- don't send data_recv
           gupl_state <= send_reply;
       else
         payloadBytes <= std_logic_vector(unsigned(payloadBytes) - 8);
@@ -212,6 +214,7 @@ begin
     synch_sender_kick_w <= '0';
     if synch_sender_kick_w = '0' and synch_sender_busy = '0' then
       if unsigned(payloadBytes) = 0 then
+        data_recv_words <= (others => '0'); -- don't send data_recv
           gupl_state <= send_reply;
       else
         payloadBytes <= std_logic_vector(unsigned(payloadBytes) - 8);
@@ -223,6 +226,7 @@ begin
     end if;
   when others =>
     synch_sender_kick_w <= '0';
+    data_recv_words <= (others => '0'); -- don't send data_recv
           gupl_state <= send_reply;
   end case;
 
@@ -243,8 +247,8 @@ begin
   payloadBytes <= std_logic_vector(unsigned(fwdPayloadBytes)+16);
   data0 <= fwdDstIpAddr;
   data1 <= X"0000" & fwdDstPort;
-          gupl_state <= forward_output_send_0;
-          gupl_state_next <= IDLE;
+  data_recv_words <= (others => '0'); -- don't send data_recv
+          gupl_state <= send_reply;
         when clear_clock =>
   global_clock_clear <= '1';
   global_clock_set_value(63 downto 56) <= data1( 7 downto  0);
