@@ -56,6 +56,9 @@ if __name__ == "__main__":
     if args.command == 'clear':
         r, a = client.clear_clock(value=args.value)
         print(r, a)
+    elif args.command == 'start':
+        r, a = client.clear_clock(value=0x1000000000000000)
+        print(r, a)
     elif args.command == 'kick':
         r, a = client.kick_clock_synch([[0x0a020013, 0x4001], [0x0a020014, 0x4001]])
         #r, a = client.kick_clock_synch([[0x0a020013, 0x4001]])
