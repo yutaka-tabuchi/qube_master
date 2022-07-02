@@ -174,7 +174,9 @@ begin
         when command_parser =>
 
   -- kick time-synch
-  if command(63 downto 56) = X"32" then
+  if command(63 downto 56) = X"30" then
+          gupl_state <= send_reply;
+  elsif command(63 downto 56) = X"32" then
           gupl_state <= kick_timesynch;
   elsif command(63 downto 56) = X"34" then
           gupl_state <= clear_clock;
