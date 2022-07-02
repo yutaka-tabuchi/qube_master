@@ -44,6 +44,16 @@ class QuBEMasterClient(object):
         print(data)
         return self.send_recv(data)
 
+    def read_clock(self, value=0):
+        data = struct.pack('BB', 0x30, 0)
+        data += struct.pack('HHH', 0, 0, 0)
+        data += struct.pack('<Q', value)
+        print(data)
+        ret = self.send_recv(data)
+        print(ret)
+        result = struct.unpack('<Q', ret[0][8:])
+        return result[0]
+
 def conv2addr(addr_str):
     addr_arry = [int(s) for s in addr_str.split(".")]
     a = 0
@@ -66,8 +76,11 @@ if __name__ == "__main__":
     if args.command == 'clear':
         r, a = client.clear_clock(value=args.value)
         print(r, a)
+    elif args.command == 'read':
+        ret = client.read_clock(value=args.value)
+        print("clock", ret)
     elif args.command == 'start':
-        r, a = client.clear_clock(value=0x1000000000000000)
+        ret = client.clear_clock(value=0x1000000000000000)
         print(r, a)
     elif args.command == 'kick' and len(addrs) > 0:
         targets = [[a, 0x4001] for a in addrs]
