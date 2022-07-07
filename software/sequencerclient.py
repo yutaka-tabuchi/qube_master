@@ -31,7 +31,7 @@ class SequencerClient(object):
         data = struct.pack('BB', 0x22, 0)
         data += struct.pack('HH', 0, 0)
         data += struct.pack('>H', 16) # 1-command = 16bytes
-        data += struct.pack('<Q', value | 0x1000000000000000) # start time with MSB=1
+        data += struct.pack('<Q', value) # start time with MSB=1
         data += struct.pack('<H', 0xFFFF) # target AWG
         data += struct.pack('BBBBB', 0, 0, 0, 0, 0) # padding
         data += struct.pack('B', 0) # entry id
