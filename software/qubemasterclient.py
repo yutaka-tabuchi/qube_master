@@ -27,7 +27,10 @@ class QuBEMasterClient(object):
             print(e)
             raise
 
-    def kick_clock_synch(self, targets):
+    def kick_clock_synch(self, target_addrs):
+        addrs = [self._conv2addr(a) for a in target_addrs]
+        targets = [[a, 0x4001] for a in addrs]
+        
         data = struct.pack('BB', 0x32, 0)
         data += struct.pack('HHH', 0, 0, 0)
         for addr,port in targets:
@@ -54,12 +57,12 @@ class QuBEMasterClient(object):
         result = struct.unpack('<Q', ret[0][8:])
         return result[0]
 
-def conv2addr(addr_str):
-    addr_arry = [int(s) for s in addr_str.split(".")]
-    a = 0
-    for v in addr_arry:
-        a = (a << 8) | v
-    return a
+    def _conv2addr(self, addr_str):
+        addr_arry = [int(s) for s in addr_str.split(".")]
+        a = 0
+        for v in addr_arry:
+            a = (a << 8) | v
+        return a
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -16,14 +16,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cycles = args.sec * 125000000 # 125Mcycls = 1sec
-    addrs = [qubemasterclient.conv2addr(a) for a in args.destinations]
-    targets = [[a, 0x4001] for a in addrs]
 
     client = qubemasterclient.QuBEMasterClient(args.ipaddr, int(args.port))
     print('clear')
     r, a = client.clear_clock(value=args.value)
     print('kick')
-    r, a = client.kick_clock_synch(targets)
+    r, a = client.kick_clock_synch(args.destinations)
 
     print('read')
     ret = client.read_clock(value=args.value)
