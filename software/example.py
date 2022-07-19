@@ -32,8 +32,9 @@ if __name__ == "__main__":
         client = sequencerclient.SequencerClient(a, int(args.port))
         r, a = client.add_sequencer(ret + cycles) # make registration
 
-    print('run @', ret+cycles+60*125000000)
+    next_trigger = ret+cycles+60*125000000
+    print('run @', next_trigger)
     for a in args.destinations:
         client = sequencerclient.SequencerClient(a, int(args.port))
-        r, a = client.add_sequencer(ret + cycles + 10*125000000) # make registration
+        r, a = client.add_sequencer(next_trigger) # make registration
 
