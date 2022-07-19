@@ -73,8 +73,6 @@ if __name__ == "__main__":
     parser.add_argument('destinations', nargs='*')
     args = parser.parse_args()
 
-    addrs = [conv2addr(a) for a in args.destinations]
-
     client = QuBEMasterClient(args.ipaddr, int(args.port))
     if args.command == 'clear':
         r, a = client.clear_clock(value=args.value)
@@ -85,9 +83,8 @@ if __name__ == "__main__":
     elif args.command == 'start':
         ret = client.clear_clock(value=0x1000000000000000)
         print(r, a)
-    elif args.command == 'kick' and len(addrs) > 0:
-        targets = [[a, 0x4001] for a in addrs]
-        r, a = client.kick_clock_synch(targets)
+    elif args.command == 'kick' and len(args.destinations) > 0:
+        r, a = client.kick_clock_synch(args.destinations)
         print(r, a)
     else:
         parser.print_help()
