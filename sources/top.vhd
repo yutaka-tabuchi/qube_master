@@ -8,10 +8,10 @@ use xpm.vcomponents.all;
 
 entity top is
   port(
-    gt_rxp_in : in std_logic_vector(7-1 downto 0);
-    gt_rxn_in : in std_logic_vector(7-1 downto 0);
-    gt_txp_out : out std_logic_vector(7-1 downto 0);
-    gt_txn_out : out std_logic_vector(7-1 downto 0);
+    gt_rxp_in : in std_logic_vector(8-1 downto 0);
+    gt_rxn_in : in std_logic_vector(8-1 downto 0);
+    gt_txp_out : out std_logic_vector(8-1 downto 0);
+    gt_txn_out : out std_logic_vector(8-1 downto 0);
 
     QSFP28_0_ACTIVITY_LED : out std_logic;
     QSFP28_0_STATUS_LEDG  : out std_logic;
@@ -342,10 +342,10 @@ architecture RTL of top is
 
   component e7udpip10g_au200_dual
     port(
-      gt_rxp_in : in std_logic_vector(7-1 downto 0);
-      gt_rxn_in : in std_logic_vector(7-1 downto 0);
-      gt_txp_out : out std_logic_vector(7-1 downto 0);
-      gt_txn_out : out std_logic_vector(7-1 downto 0);
+      gt_rxp_in : in std_logic_vector(8-1 downto 0);
+      gt_rxn_in : in std_logic_vector(8-1 downto 0);
+      gt_txp_out : out std_logic_vector(8-1 downto 0);
+      gt_txn_out : out std_logic_vector(8-1 downto 0);
 
       gt_refclk_p : in std_logic_vector(1 downto 0);
       gt_refclk_n : in std_logic_vector(1 downto 0);
