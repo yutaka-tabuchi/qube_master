@@ -8,17 +8,17 @@ use xpm.vcomponents.all;
 
 entity top is
   port(
-    gt_rxp_in : in std_logic_vector(4-1 downto 0);
-    gt_rxn_in : in std_logic_vector(4-1 downto 0);
-    gt_txp_out : out std_logic_vector(4-1 downto 0);
-    gt_txn_out : out std_logic_vector(4-1 downto 0);
+    gt_rxp_in : in std_logic_vector(7-1 downto 0);
+    gt_rxn_in : in std_logic_vector(7-1 downto 0);
+    gt_txp_out : out std_logic_vector(7-1 downto 0);
+    gt_txn_out : out std_logic_vector(7-1 downto 0);
 
     QSFP28_0_ACTIVITY_LED : out std_logic;
     QSFP28_0_STATUS_LEDG  : out std_logic;
     QSFP28_0_STATUS_LEDY  : out std_logic;
     
-    gt_refclk_p : in std_logic;
-    gt_refclk_n : in std_logic;
+    gt_refclk_p : in std_logic_vector(1 downto 0);
+    gt_refclk_n : in std_logic_vector(1 downto 0);
 
     SYSCLK3_N : in std_logic;
     SYSCLK3_P : in std_logic
@@ -177,6 +177,78 @@ architecture RTL of top is
   attribute keep of pUdp1Send_Ack_3     : signal is "true";
   attribute keep of pUdp1Send_Enable_3  : signal is "true";
 
+  signal pUdp0Send_Data_4    : std_logic_vector(127 downto 0);
+  signal pUdp0Send_Request_4 : std_logic;
+  signal pUdp0Send_Ack_4     : std_logic;
+  signal pUdp0Send_Enable_4  : std_logic;
+  signal pUdp1Send_Data_4    : std_logic_vector(127 downto 0);
+  signal pUdp1Send_Request_4 : std_logic;
+  signal pUdp1Send_Ack_4     : std_logic;
+  signal pUdp1Send_Enable_4  : std_logic;
+  
+  signal pUdp0Receive_Data_4    : std_logic_vector(127 downto 0);
+  signal pUdp0Receive_Request_4 : std_logic;
+  signal pUdp0Receive_Ack_4     : std_logic;
+  signal pUdp0Receive_Enable_4  : std_logic;
+  signal pUdp1Receive_Data_4    : std_logic_vector(127 downto 0);
+  signal pUdp1Receive_Request_4 : std_logic;
+  signal pUdp1Receive_Ack_4     : std_logic;
+  signal pUdp1Receive_Enable_4  : std_logic;
+  
+  signal pUdp0Send_Data_5    : std_logic_vector(127 downto 0);
+  signal pUdp0Send_Request_5 : std_logic;
+  signal pUdp0Send_Ack_5     : std_logic;
+  signal pUdp0Send_Enable_5  : std_logic;
+  signal pUdp1Send_Data_5    : std_logic_vector(127 downto 0);
+  signal pUdp1Send_Request_5 : std_logic;
+  signal pUdp1Send_Ack_5     : std_logic;
+  signal pUdp1Send_Enable_5  : std_logic;
+  
+  signal pUdp0Receive_Data_5    : std_logic_vector(127 downto 0);
+  signal pUdp0Receive_Request_5 : std_logic;
+  signal pUdp0Receive_Ack_5     : std_logic;
+  signal pUdp0Receive_Enable_5  : std_logic;
+  signal pUdp1Receive_Data_5    : std_logic_vector(127 downto 0);
+  signal pUdp1Receive_Request_5 : std_logic;
+  signal pUdp1Receive_Ack_5     : std_logic;
+  signal pUdp1Receive_Enable_5  : std_logic;
+
+  signal pUdp0Send_Data_6    : std_logic_vector(127 downto 0);
+  signal pUdp0Send_Request_6 : std_logic;
+  signal pUdp0Send_Ack_6     : std_logic;
+  signal pUdp0Send_Enable_6  : std_logic;
+  signal pUdp1Send_Data_6    : std_logic_vector(127 downto 0);
+  signal pUdp1Send_Request_6 : std_logic;
+  signal pUdp1Send_Ack_6     : std_logic;
+  signal pUdp1Send_Enable_6  : std_logic;
+  
+  signal pUdp0Receive_Data_6    : std_logic_vector(127 downto 0);
+  signal pUdp0Receive_Request_6 : std_logic;
+  signal pUdp0Receive_Ack_6     : std_logic;
+  signal pUdp0Receive_Enable_6  : std_logic;
+  signal pUdp1Receive_Data_6    : std_logic_vector(127 downto 0);
+  signal pUdp1Receive_Request_6 : std_logic;
+  signal pUdp1Receive_Ack_6     : std_logic;
+  signal pUdp1Receive_Enable_6  : std_logic;
+
+  signal pUdp0Send_Data_7    : std_logic_vector(127 downto 0);
+  signal pUdp0Send_Request_7 : std_logic;
+  signal pUdp0Send_Ack_7     : std_logic;
+  signal pUdp0Send_Enable_7  : std_logic;
+  signal pUdp1Send_Data_7    : std_logic_vector(127 downto 0);
+  signal pUdp1Send_Request_7 : std_logic;
+  signal pUdp1Send_Ack_7     : std_logic;
+  signal pUdp1Send_Enable_7  : std_logic;
+  
+  signal pUdp0Receive_Data_7    : std_logic_vector(127 downto 0);
+  signal pUdp0Receive_Request_7 : std_logic;
+  signal pUdp0Receive_Ack_7     : std_logic;
+  signal pUdp0Receive_Enable_7  : std_logic;
+  signal pUdp1Receive_Data_7    : std_logic_vector(127 downto 0);
+  signal pUdp1Receive_Request_7 : std_logic;
+  signal pUdp1Receive_Ack_7     : std_logic;
+  signal pUdp1Receive_Enable_7  : std_logic;
+  
   signal MyIpAddr_0       : std_logic_vector(31 downto 0);
   signal MyMacAddr_0      : std_logic_vector(47 downto 0);
   signal MyNetMask_0      : std_logic_vector(31 downto 0);
@@ -209,6 +281,38 @@ architecture RTL of top is
   signal MyUdpPort_3_0    : std_logic_vector(15 downto 0);
   signal MyUdpPort_3_1    : std_logic_vector(15 downto 0);
 
+  signal MyIpAddr_4       : std_logic_vector(31 downto 0);
+  signal MyMacAddr_4      : std_logic_vector(47 downto 0);
+  signal MyNetMask_4      : std_logic_vector(31 downto 0);
+  signal DefaultGateway_4 : std_logic_vector(31 downto 0);
+  signal TargetIPAddr_4   : std_logic_vector(31 downto 0);
+  signal MyUdpPort_4_0    : std_logic_vector(15 downto 0);
+  signal MyUdpPort_4_1    : std_logic_vector(15 downto 0);
+
+  signal MyIpAddr_5       : std_logic_vector(31 downto 0);
+  signal MyMacAddr_5      : std_logic_vector(47 downto 0);
+  signal MyNetMask_5      : std_logic_vector(31 downto 0);
+  signal DefaultGateway_5 : std_logic_vector(31 downto 0);
+  signal TargetIPAddr_5   : std_logic_vector(31 downto 0);
+  signal MyUdpPort_5_0    : std_logic_vector(15 downto 0);
+  signal MyUdpPort_5_1    : std_logic_vector(15 downto 0);
+
+  signal MyIpAddr_6       : std_logic_vector(31 downto 0);
+  signal MyMacAddr_6      : std_logic_vector(47 downto 0);
+  signal MyNetMask_6      : std_logic_vector(31 downto 0);
+  signal DefaultGateway_6 : std_logic_vector(31 downto 0);
+  signal TargetIPAddr_6   : std_logic_vector(31 downto 0);
+  signal MyUdpPort_6_0    : std_logic_vector(15 downto 0);
+  signal MyUdpPort_6_1    : std_logic_vector(15 downto 0);
+
+  signal MyIpAddr_7       : std_logic_vector(31 downto 0);
+  signal MyMacAddr_7      : std_logic_vector(47 downto 0);
+  signal MyNetMask_7      : std_logic_vector(31 downto 0);
+  signal DefaultGateway_7 : std_logic_vector(31 downto 0);
+  signal TargetIPAddr_7   : std_logic_vector(31 downto 0);
+  signal MyUdpPort_7_0    : std_logic_vector(15 downto 0);
+  signal MyUdpPort_7_1    : std_logic_vector(15 downto 0);
+
   component synch_sender
     port (
       clk   : in std_logic;
@@ -236,15 +340,15 @@ architecture RTL of top is
       );
   end component synch_sender;
 
-  component e7udpip10g_au200
+  component e7udpip10g_au200_dual
     port(
-      gt_rxp_in : in std_logic_vector(4-1 downto 0);
-      gt_rxn_in : in std_logic_vector(4-1 downto 0);
-      gt_txp_out : out std_logic_vector(4-1 downto 0);
-      gt_txn_out : out std_logic_vector(4-1 downto 0);
+      gt_rxp_in : in std_logic_vector(7-1 downto 0);
+      gt_rxn_in : in std_logic_vector(7-1 downto 0);
+      gt_txp_out : out std_logic_vector(7-1 downto 0);
+      gt_txn_out : out std_logic_vector(7-1 downto 0);
 
-      gt_refclk_p : in std_logic;
-      gt_refclk_n : in std_logic;
+      gt_refclk_p : in std_logic_vector(1 downto 0);
+      gt_refclk_n : in std_logic_vector(1 downto 0);
 
       clk250mhz : in std_logic;
       clk100mhz : in std_logic;
@@ -254,6 +358,10 @@ architecture RTL of top is
       rx_block_lock_led_1 : out std_logic;  -- Indicates Core Block Lock
       rx_block_lock_led_2 : out std_logic;  -- Indicates Core Block Lock
       rx_block_lock_led_3 : out std_logic;  -- Indicates Core Block Lock
+      rx_block_lock_led_4 : out std_logic;  -- Indicates Core Block Lock
+      rx_block_lock_led_5 : out std_logic;  -- Indicates Core Block Lock
+      rx_block_lock_led_6 : out std_logic;  -- Indicates Core Block Lock
+      rx_block_lock_led_7 : out std_logic;  -- Indicates Core Block Lock
 
       MyIpAddr_0       : in std_logic_vector(31 downto 0);
       MyMacAddr_0      : in std_logic_vector(47 downto 0);
@@ -353,9 +461,109 @@ architecture RTL of top is
       pUdp1Receive_Data_3    : out std_logic_vector(127 downto 0);
       pUdp1Receive_Request_3 : out std_logic;
       pUdp1Receive_Ack_3     : in  std_logic;
-      pUdp1Receive_Enable_3  : out std_logic
+      pUdp1Receive_Enable_3  : out std_logic;
+
+      MyIpAddr_4       : in std_logic_vector(31 downto 0);
+      MyMacAddr_4      : in std_logic_vector(47 downto 0);
+      MyNetMask_4      : in std_logic_vector(31 downto 0);
+      DefaultGateway_4 : in std_logic_vector(31 downto 0);
+      TargetIPAddr_4   : in std_logic_vector(31 downto 0);
+      MyUdpPort_4_0    : in std_logic_vector(15 downto 0);
+      MyUdpPort_4_1    : in std_logic_vector(15 downto 0);
+
+      pUdp0Send_Data_4       : in  std_logic_vector(127 downto 0);
+      pUdp0Send_Request_4    : in  std_logic;
+      pUdp0Send_Ack_4        : out std_logic;
+      pUdp0Send_Enable_4     : in  std_logic;
+      pUdp1Send_Data_4       : in  std_logic_vector(127 downto 0);
+      pUdp1Send_Request_4    : in  std_logic;
+      pUdp1Send_Ack_4        : out std_logic;
+      pUdp1Send_Enable_4     : in  std_logic;
+      pUdp0Receive_Data_4    : out std_logic_vector(127 downto 0);
+      pUdp0Receive_Request_4 : out std_logic;
+      pUdp0Receive_Ack_4     : in  std_logic;
+      pUdp0Receive_Enable_4  : out std_logic;
+      pUdp1Receive_Data_4    : out std_logic_vector(127 downto 0);
+      pUdp1Receive_Request_4 : out std_logic;
+      pUdp1Receive_Ack_4     : in  std_logic;
+      pUdp1Receive_Enable_4  : out std_logic;
+      
+      MyIpAddr_5       : in std_logic_vector(31 downto 0);
+      MyMacAddr_5      : in std_logic_vector(47 downto 0);
+      MyNetMask_5      : in std_logic_vector(31 downto 0);
+      DefaultGateway_5 : in std_logic_vector(31 downto 0);
+      TargetIPAddr_5   : in std_logic_vector(31 downto 0);
+      MyUdpPort_5_0    : in std_logic_vector(15 downto 0);
+      MyUdpPort_5_1    : in std_logic_vector(15 downto 0);
+
+      pUdp0Send_Data_5       : in  std_logic_vector(127 downto 0);
+      pUdp0Send_Request_5    : in  std_logic;
+      pUdp0Send_Ack_5        : out std_logic;
+      pUdp0Send_Enable_5     : in  std_logic;
+      pUdp1Send_Data_5       : in  std_logic_vector(127 downto 0);
+      pUdp1Send_Request_5    : in  std_logic;
+      pUdp1Send_Ack_5        : out std_logic;
+      pUdp1Send_Enable_5     : in  std_logic;
+      pUdp0Receive_Data_5    : out std_logic_vector(127 downto 0);
+      pUdp0Receive_Request_5 : out std_logic;
+      pUdp0Receive_Ack_5     : in  std_logic;
+      pUdp0Receive_Enable_5  : out std_logic;
+      pUdp1Receive_Data_5    : out std_logic_vector(127 downto 0);
+      pUdp1Receive_Request_5 : out std_logic;
+      pUdp1Receive_Ack_5     : in  std_logic;
+      pUdp1Receive_Enable_5  : out std_logic;
+
+      MyIpAddr_6       : in std_logic_vector(31 downto 0);
+      MyMacAddr_6      : in std_logic_vector(47 downto 0);
+      MyNetMask_6      : in std_logic_vector(31 downto 0);
+      DefaultGateway_6 : in std_logic_vector(31 downto 0);
+      TargetIPAddr_6   : in std_logic_vector(31 downto 0);
+      MyUdpPort_6_0    : in std_logic_vector(15 downto 0);
+      MyUdpPort_6_1    : in std_logic_vector(15 downto 0);
+
+      pUdp0Send_Data_6       : in  std_logic_vector(127 downto 0);
+      pUdp0Send_Request_6    : in  std_logic;
+      pUdp0Send_Ack_6        : out std_logic;
+      pUdp0Send_Enable_6     : in  std_logic;
+      pUdp1Send_Data_6       : in  std_logic_vector(127 downto 0);
+      pUdp1Send_Request_6    : in  std_logic;
+      pUdp1Send_Ack_6        : out std_logic;
+      pUdp1Send_Enable_6     : in  std_logic;
+      pUdp0Receive_Data_6    : out std_logic_vector(127 downto 0);
+      pUdp0Receive_Request_6 : out std_logic;
+      pUdp0Receive_Ack_6     : in  std_logic;
+      pUdp0Receive_Enable_6  : out std_logic;
+      pUdp1Receive_Data_6    : out std_logic_vector(127 downto 0);
+      pUdp1Receive_Request_6 : out std_logic;
+      pUdp1Receive_Ack_6     : in  std_logic;
+      pUdp1Receive_Enable_6  : out std_logic;
+
+      MyIpAddr_7       : in std_logic_vector(31 downto 0);
+      MyMacAddr_7      : in std_logic_vector(47 downto 0);
+      MyNetMask_7      : in std_logic_vector(31 downto 0);
+      DefaultGateway_7 : in std_logic_vector(31 downto 0);
+      TargetIPAddr_7   : in std_logic_vector(31 downto 0);
+      MyUdpPort_7_0    : in std_logic_vector(15 downto 0);
+      MyUdpPort_7_1    : in std_logic_vector(15 downto 0);
+
+      pUdp0Send_Data_7       : in  std_logic_vector(127 downto 0);
+      pUdp0Send_Request_7    : in  std_logic;
+      pUdp0Send_Ack_7        : out std_logic;
+      pUdp0Send_Enable_7     : in  std_logic;
+      pUdp1Send_Data_7       : in  std_logic_vector(127 downto 0);
+      pUdp1Send_Request_7    : in  std_logic;
+      pUdp1Send_Ack_7        : out std_logic;
+      pUdp1Send_Enable_7     : in  std_logic;
+      pUdp0Receive_Data_7    : out std_logic_vector(127 downto 0);
+      pUdp0Receive_Request_7 : out std_logic;
+      pUdp0Receive_Ack_7     : in  std_logic;
+      pUdp0Receive_Enable_7  : out std_logic;
+      pUdp1Receive_Data_7    : out std_logic_vector(127 downto 0);
+      pUdp1Receive_Request_7 : out std_logic;
+      pUdp1Receive_Ack_7     : in  std_logic;
+      pUdp1Receive_Enable_7  : out std_logic
       );
-  end component e7udpip10g_au200;
+  end component e7udpip10g_au200_dual;
 
   component config_memory_wrapper
     port (
@@ -384,7 +592,31 @@ architecture RTL of top is
       MYNETMASK3_o : out std_logic_vector(31 downto 0);
       MYDEFAULTGATEWAY3_o : out std_logic_vector(31 downto 0);
       MYTARGETIPADDR3_o : out std_logic_vector(31 downto 0);
-      MYMACADDR3_o : out std_logic_vector(47 downto 0)
+      MYMACADDR3_o : out std_logic_vector(47 downto 0);
+      
+      MYIPADDR4_o : out std_logic_vector(31 downto 0);
+      MYNETMASK4_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY4_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR4_o : out std_logic_vector(31 downto 0);
+      MYMACADDR4_o : out std_logic_vector(47 downto 0);
+
+      MYIPADDR5_o : out std_logic_vector(31 downto 0);
+      MYNETMASK5_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY5_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR5_o : out std_logic_vector(31 downto 0);
+      MYMACADDR5_o : out std_logic_vector(47 downto 0);
+
+      MYIPADDR6_o : out std_logic_vector(31 downto 0);
+      MYNETMASK6_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY6_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR6_o : out std_logic_vector(31 downto 0);
+      MYMACADDR6_o : out std_logic_vector(47 downto 0);
+      
+      MYIPADDR7_o : out std_logic_vector(31 downto 0);
+      MYNETMASK7_o : out std_logic_vector(31 downto 0);
+      MYDEFAULTGATEWAY7_o : out std_logic_vector(31 downto 0);
+      MYTARGETIPADDR7_o : out std_logic_vector(31 downto 0);
+      MYMACADDR7_o : out std_logic_vector(47 downto 0)
       );
   end component config_memory_wrapper;
   
@@ -433,6 +665,10 @@ architecture RTL of top is
   signal rx_block_lock_led_1 : std_logic;
   signal rx_block_lock_led_2 : std_logic;
   signal rx_block_lock_led_3 : std_logic;
+  signal rx_block_lock_led_4 : std_logic;
+  signal rx_block_lock_led_5 : std_logic;
+  signal rx_block_lock_led_6 : std_logic;
+  signal rx_block_lock_led_7 : std_logic;
 
   signal clk250mhz : std_logic;
   signal clk100mhz : std_logic;
@@ -535,28 +771,42 @@ begin
   pUdp1Send_Enable_0  <= pUdp1Receive_Enable_0;
   ----------------------------------------------------
 
-  ----------------------------------------------------
-  -- 10.4.X.X, 16'h4000
-  forward_input_data <= pUdp0Receive_Data_1;
-  forward_input_req  <= pUdp0Receive_Request_1;
-  pUdp0Receive_Ack_1 <= forward_input_ack;
-  forward_input_en   <= pUdp0Receive_Enable_1;
+  -- ----------------------------------------------------
+  -- -- 10.4.X.X, 16'h4000
+  -- forward_input_data <= pUdp0Receive_Data_1;
+  -- forward_input_req  <= pUdp0Receive_Request_1;
+  -- pUdp0Receive_Ack_1 <= forward_input_ack;
+  -- forward_input_en   <= pUdp0Receive_Enable_1;
   
-  pUdp0Send_Data_1    <= forward_output_data;
-  pUdp0Send_Request_1 <= forward_output_req;
-  forward_output_ack  <= pUdp0Send_Ack_1;
-  pUdp0Send_Enable_1  <= forward_output_en;
+  -- pUdp0Send_Data_1    <= forward_output_data;
+  -- pUdp0Send_Request_1 <= forward_output_req;
+  -- forward_output_ack  <= pUdp0Send_Ack_1;
+  -- pUdp0Send_Enable_1  <= forward_output_en;
   
-  -- 10.4.X.X, 16'h4001
-  synch_sender_in_data <= pUdp1Receive_Data_1;
-  synch_sender_in_req  <= pUdp1Receive_Request_1;
-  pUdp1Receive_Ack_1   <= synch_sender_in_ack;
-  synch_sender_in_en   <= pUdp1Receive_Enable_1;
+  -- -- 10.4.X.X, 16'h4001
+  -- synch_sender_in_data <= pUdp1Receive_Data_1;
+  -- synch_sender_in_req  <= pUdp1Receive_Request_1;
+  -- pUdp1Receive_Ack_1   <= synch_sender_in_ack;
+  -- synch_sender_in_en   <= pUdp1Receive_Enable_1;
 
-  pUdp1Send_Data_1     <= synch_sender_out_data;
-  pUdp1Send_Request_1  <= synch_sender_out_req;
-  synch_sender_out_ack <= pUdp1Send_Ack_1;
-  pUdp1Send_Enable_1   <= synch_sender_out_en;
+  -- pUdp1Send_Data_1     <= synch_sender_out_data;
+  -- pUdp1Send_Request_1  <= synch_sender_out_req;
+  -- synch_sender_out_ack <= pUdp1Send_Ack_1;
+  -- pUdp1Send_Enable_1   <= synch_sender_out_en;
+  -- ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.254.X.X, 16'h4000
+  pUdp0Send_Data_1    <= pUdp0Receive_Data_1;
+  pUdp0Send_Request_1 <= pUdp0Receive_Request_1;
+  pUdp0Receive_Ack_1  <= pUdp0Send_Ack_1;
+  pUdp0Send_Enable_1  <= pUdp0Receive_Enable_1;
+  
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_1    <= pUdp1Receive_Data_1;
+  pUdp1Send_Request_1 <= pUdp1Receive_Request_1;
+  pUdp1Receive_Ack_1  <= pUdp1Send_Ack_1;
+  pUdp1Send_Enable_1  <= pUdp1Receive_Enable_1;
   ----------------------------------------------------
 
   ----------------------------------------------------
@@ -585,6 +835,58 @@ begin
   pUdp1Send_Request_3 <= pUdp1Receive_Request_3;
   pUdp1Receive_Ack_3  <= pUdp1Send_Ack_3;
   pUdp1Send_Enable_3  <= pUdp1Receive_Enable_3;
+  ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.4.X.X, 16'h4000
+  forward_input_data <= pUdp0Receive_Data_4;
+  forward_input_req  <= pUdp0Receive_Request_4;
+  pUdp0Receive_Ack_4 <= forward_input_ack;
+  forward_input_en   <= pUdp0Receive_Enable_4;
+  
+  pUdp0Send_Data_4    <= forward_output_data;
+  pUdp0Send_Request_4 <= forward_output_req;
+  forward_output_ack  <= pUdp0Send_Ack_4;
+  pUdp0Send_Enable_4  <= forward_output_en;
+  
+  -- 10.4.X.X, 16'h4001
+  synch_sender_in_data <= pUdp1Receive_Data_4;
+  synch_sender_in_req  <= pUdp1Receive_Request_4;
+  pUdp1Receive_Ack_4   <= synch_sender_in_ack;
+  synch_sender_in_en   <= pUdp1Receive_Enable_4;
+
+  pUdp1Send_Data_4     <= synch_sender_out_data;
+  pUdp1Send_Request_4  <= synch_sender_out_req;
+  synch_sender_out_ack <= pUdp1Send_Ack_4;
+  pUdp1Send_Enable_4   <= synch_sender_out_en;
+  ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.255.X.X, 16'h4000
+  pUdp0Send_Data_6    <= pUdp0Receive_Data_6;
+  pUdp0Send_Request_6 <= pUdp0Receive_Request_6;
+  pUdp0Receive_Ack_6  <= pUdp0Send_Ack_6;
+  pUdp0Send_Enable_6  <= pUdp0Receive_Enable_6;
+  
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_6    <= pUdp1Receive_Data_6;
+  pUdp1Send_Request_6 <= pUdp1Receive_Request_6;
+  pUdp1Receive_Ack_6  <= pUdp1Send_Ack_6;
+  pUdp1Send_Enable_6  <= pUdp1Receive_Enable_6;
+  ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.255.X.X, 16'h4000
+  pUdp0Send_Data_7    <= pUdp0Receive_Data_7;
+  pUdp0Send_Request_7 <= pUdp0Receive_Request_7;
+  pUdp0Receive_Ack_7  <= pUdp0Send_Ack_7;
+  pUdp0Send_Enable_7  <= pUdp0Receive_Enable_7;
+  
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_7    <= pUdp1Receive_Data_7;
+  pUdp1Send_Request_7 <= pUdp1Receive_Request_7;
+  pUdp1Receive_Ack_7  <= pUdp1Send_Ack_7;
+  pUdp1Send_Enable_7  <= pUdp1Receive_Enable_7;
   ----------------------------------------------------
 
   process(clk125mhz)
@@ -728,7 +1030,7 @@ begin
   MyUdpPort_3_0    <= X"4000";
   MyUdpPort_3_1    <= X"4001";
   
-  e7udpip10g_au200_i : e7udpip10g_au200 port map(
+  e7udpip10g_au200_dual_i : e7udpip10g_au200_dual port map(
     gt_rxp_in => gt_rxp_in,
     gt_rxn_in => gt_rxn_in,
     gt_txp_out => gt_txp_out,
@@ -745,6 +1047,10 @@ begin
     rx_block_lock_led_1 => rx_block_lock_led_1,
     rx_block_lock_led_2 => rx_block_lock_led_2,
     rx_block_lock_led_3 => rx_block_lock_led_3,
+    rx_block_lock_led_4 => rx_block_lock_led_4,
+    rx_block_lock_led_5 => rx_block_lock_led_5,
+    rx_block_lock_led_6 => rx_block_lock_led_6,
+    rx_block_lock_led_7 => rx_block_lock_led_7,
 
     MyIpAddr_0       => MyIpAddr_0,
     MyMacAddr_0      => MyMacAddr_0,
@@ -844,7 +1150,107 @@ begin
     pUdp1Receive_Data_3    => pUdp1Receive_Data_3,
     pUdp1Receive_Request_3 => pUdp1Receive_Request_3,
     pUdp1Receive_Ack_3     => pUdp1Receive_Ack_3,
-    pUdp1Receive_Enable_3  => pUdp1Receive_Enable_3
+    pUdp1Receive_Enable_3  => pUdp1Receive_Enable_3,
+
+    MyIpAddr_4       => MyIpAddr_4,
+    MyMacAddr_4      => MyMacAddr_4,
+    MyNetMask_4      => MyNetMask_4,
+    DefaultGateway_4 => DefaultGateway_4,
+    TargetIPAddr_4   => TargetIPAddr_4,
+    MyUdpPort_4_0    => MyUdpPort_4_0,
+    MyUdpPort_4_1    => MyUdpPort_4_1,
+
+    pUdp0Send_Data_4       => pUdp0Send_Data_4,
+    pUdp0Send_Request_4    => pUdp0Send_Request_4,
+    pUdp0Send_Ack_4        => pUdp0Send_Ack_4,
+    pUdp0Send_Enable_4     => pUdp0Send_Enable_4,
+    pUdp1Send_Data_4       => pUdp1Send_Data_4,
+    pUdp1Send_Request_4    => pUdp1Send_Request_4,
+    pUdp1Send_Ack_4        => pUdp1Send_Ack_4,
+    pUdp1Send_Enable_4     => pUdp1Send_Enable_4,
+    pUdp0Receive_Data_4    => pUdp0Receive_Data_4,
+    pUdp0Receive_Request_4 => pUdp0Receive_Request_4,
+    pUdp0Receive_Ack_4     => pUdp0Receive_Ack_4,
+    pUdp0Receive_Enable_4  => pUdp0Receive_Enable_4,
+    pUdp1Receive_Data_4    => pUdp1Receive_Data_4,
+    pUdp1Receive_Request_4 => pUdp1Receive_Request_4,
+    pUdp1Receive_Ack_4     => pUdp1Receive_Ack_4,
+    pUdp1Receive_Enable_4  => pUdp1Receive_Enable_4,
+
+    MyIpAddr_5       => MyIpAddr_5,
+    MyMacAddr_5      => MyMacAddr_5,
+    MyNetMask_5      => MyNetMask_5,
+    DefaultGateway_5 => DefaultGateway_5,
+    TargetIPAddr_5   => TargetIPAddr_5,
+    MyUdpPort_5_0    => MyUdpPort_5_0,
+    MyUdpPort_5_1    => MyUdpPort_5_1,
+
+    pUdp0Send_Data_5       => pUdp0Send_Data_5,
+    pUdp0Send_Request_5    => pUdp0Send_Request_5,
+    pUdp0Send_Ack_5        => pUdp0Send_Ack_5,
+    pUdp0Send_Enable_5     => pUdp0Send_Enable_5,
+    pUdp1Send_Data_5       => pUdp1Send_Data_5,
+    pUdp1Send_Request_5    => pUdp1Send_Request_5,
+    pUdp1Send_Ack_5        => pUdp1Send_Ack_5,
+    pUdp1Send_Enable_5     => pUdp1Send_Enable_5,
+    pUdp0Receive_Data_5    => pUdp0Receive_Data_5,
+    pUdp0Receive_Request_5 => pUdp0Receive_Request_5,
+    pUdp0Receive_Ack_5     => pUdp0Receive_Ack_5,
+    pUdp0Receive_Enable_5  => pUdp0Receive_Enable_5,
+    pUdp1Receive_Data_5    => pUdp1Receive_Data_5,
+    pUdp1Receive_Request_5 => pUdp1Receive_Request_5,
+    pUdp1Receive_Ack_5     => pUdp1Receive_Ack_5,
+    pUdp1Receive_Enable_5  => pUdp1Receive_Enable_5,
+
+    MyIpAddr_6       => MyIpAddr_6,
+    MyMacAddr_6      => MyMacAddr_6,
+    MyNetMask_6      => MyNetMask_6,
+    DefaultGateway_6 => DefaultGateway_6,
+    TargetIPAddr_6   => TargetIPAddr_6,
+    MyUdpPort_6_0    => MyUdpPort_6_0,
+    MyUdpPort_6_1    => MyUdpPort_6_1,
+
+    pUdp0Send_Data_6       => pUdp0Send_Data_6,
+    pUdp0Send_Request_6    => pUdp0Send_Request_6,
+    pUdp0Send_Ack_6        => pUdp0Send_Ack_6,
+    pUdp0Send_Enable_6     => pUdp0Send_Enable_6,
+    pUdp1Send_Data_6       => pUdp1Send_Data_6,
+    pUdp1Send_Request_6    => pUdp1Send_Request_6,
+    pUdp1Send_Ack_6        => pUdp1Send_Ack_6,
+    pUdp1Send_Enable_6     => pUdp1Send_Enable_6,
+    pUdp0Receive_Data_6    => pUdp0Receive_Data_6,
+    pUdp0Receive_Request_6 => pUdp0Receive_Request_6,
+    pUdp0Receive_Ack_6     => pUdp0Receive_Ack_6,
+    pUdp0Receive_Enable_6  => pUdp0Receive_Enable_6,
+    pUdp1Receive_Data_6    => pUdp1Receive_Data_6,
+    pUdp1Receive_Request_6 => pUdp1Receive_Request_6,
+    pUdp1Receive_Ack_6     => pUdp1Receive_Ack_6,
+    pUdp1Receive_Enable_6  => pUdp1Receive_Enable_6,
+
+    MyIpAddr_7       => MyIpAddr_7,
+    MyMacAddr_7      => MyMacAddr_7,
+    MyNetMask_7      => MyNetMask_7,
+    DefaultGateway_7 => DefaultGateway_7,
+    TargetIPAddr_7   => TargetIPAddr_7,
+    MyUdpPort_7_0    => MyUdpPort_7_0,
+    MyUdpPort_7_1    => MyUdpPort_7_1,
+
+    pUdp0Send_Data_7       => pUdp0Send_Data_7,
+    pUdp0Send_Request_7    => pUdp0Send_Request_7,
+    pUdp0Send_Ack_7        => pUdp0Send_Ack_7,
+    pUdp0Send_Enable_7     => pUdp0Send_Enable_7,
+    pUdp1Send_Data_7       => pUdp1Send_Data_7,
+    pUdp1Send_Request_7    => pUdp1Send_Request_7,
+    pUdp1Send_Ack_7        => pUdp1Send_Ack_7,
+    pUdp1Send_Enable_7     => pUdp1Send_Enable_7,
+    pUdp0Receive_Data_7    => pUdp0Receive_Data_7,
+    pUdp0Receive_Request_7 => pUdp0Receive_Request_7,
+    pUdp0Receive_Ack_7     => pUdp0Receive_Ack_7,
+    pUdp0Receive_Enable_7  => pUdp0Receive_Enable_7,
+    pUdp1Receive_Data_7    => pUdp1Receive_Data_7,
+    pUdp1Receive_Request_7 => pUdp1Receive_Request_7,
+    pUdp1Receive_Ack_7     => pUdp1Receive_Ack_7,
+    pUdp1Receive_Enable_7  => pUdp1Receive_Enable_7
     );
     
   ila_1_i : ila_1 port map(

@@ -26,7 +26,31 @@ module config_memory_wrapper(
 			     output wire [31:0] MYNETMASK3_o,
 			     output wire [31:0] MYDEFAULTGATEWAY3_o,
 			     output wire [31:0] MYTARGETIPADDR3_o,
-			     output wire [47:0] MYMACADDR3_o
+			     output wire [47:0] MYMACADDR3_o,
+
+			     output wire [31:0] MYIPADDR4_o,
+			     output wire [31:0] MYNETMASK4_o,
+			     output wire [31:0] MYDEFAULTGATEWAY4_o,
+			     output wire [31:0] MYTARGETIPADDR4_o,
+			     output wire [47:0] MYMACADDR4_o,
+
+			     output wire [31:0] MYIPADDR5_o,
+			     output wire [31:0] MYNETMASK5_o,
+			     output wire [31:0] MYDEFAULTGATEWAY5_o,
+			     output wire [31:0] MYTARGETIPADDR5_o,
+			     output wire [47:0] MYMACADDR5_o,
+
+			     output wire [31:0] MYIPADDR6_o,
+			     output wire [31:0] MYNETMASK6_o,
+			     output wire [31:0] MYDEFAULTGATEWAY6_o,
+			     output wire [31:0] MYTARGETIPADDR6_o,
+			     output wire [47:0] MYMACADDR6_o,
+
+			     output wire [31:0] MYIPADDR7_o,
+			     output wire [31:0] MYNETMASK7_o,
+			     output wire [31:0] MYDEFAULTGATEWAY7_o,
+			     output wire [31:0] MYTARGETIPADDR7_o,
+			     output wire [47:0] MYMACADDR7_o
 			     );
     
     reg [31:0] myipaddr0 = 32'h0a0300ff;
@@ -35,7 +59,7 @@ module config_memory_wrapper(
     reg [31:0] mytargetipaddr0 = 32'h0a000001;
     reg [47:0] mymacaddr0 = 48'h001b1affff00;
 
-    reg [31:0] myipaddr1 = 32'h0a0400ff;
+    reg [31:0] myipaddr1 = 32'h0afd00ff;
     reg [31:0] mynetmask1 = 32'hff000000;
     reg [31:0] mydefaultgateway1 = 32'h0a000001;
     reg [31:0] mytargetipaddr1 = 32'h0a000001;
@@ -76,6 +100,54 @@ module config_memory_wrapper(
     assign MYDEFAULTGATEWAY3_o = mydefaultgateway3;
     assign MYTARGETIPADDR3_o = mytargetipaddr3;
     assign MYMACADDR3_o = mymacaddr3;
+
+    reg [31:0] myipaddr4 = 32'h0a0400ff; // dup myipaddr1
+    reg [31:0] mynetmask4 = 32'hff000000;
+    reg [31:0] mydefaultgateway4 = 32'h0a000001;
+    reg [31:0] mytargetipaddr4 = 32'h0a000001;
+    reg [47:0] mymacaddr4 = 48'h001b1affff04;
+
+    reg [31:0] myipaddr5 = 32'h0aed00ff;
+    reg [31:0] mynetmask5 = 32'hff000000;
+    reg [31:0] mydefaultgateway5 = 32'h0a000001;
+    reg [31:0] mytargetipaddr5 = 32'h0a000001;
+    reg [47:0] mymacaddr5 = 48'h001b1affff05;
+
+    reg [31:0] myipaddr6 = 32'h0aee00ff;
+    reg [31:0] mynetmask6 = 32'hff000000;
+    reg [31:0] mydefaultgateway6 = 32'h0a000001;
+    reg [31:0] mytargetipaddr6 = 32'h0a000001;
+    reg [47:0] mymacaddr6 = 48'h001b1affff06;
+
+    reg [31:0] myipaddr7 = 32'h0aef00ff;
+    reg [31:0] mynetmask7 = 32'hff000000;
+    reg [31:0] mydefaultgateway7 = 32'h0a000001;
+    reg [31:0] mytargetipaddr7 = 32'h0a000001;
+    reg [47:0] mymacaddr7 = 48'h001b1affff07;
+
+    assign MYIPADDR4_o = myipaddr4;
+    assign MYNETMASK4_o = mynetmask4;
+    assign MYDEFAULTGATEWAY4_o = mydefaultgateway4;
+    assign MYTARGETIPADDR4_o = mytargetipaddr4;
+    assign MYMACADDR4_o = mymacaddr4;
+
+    assign MYIPADDR5_o = myipaddr5;
+    assign MYNETMASK5_o = mynetmask5;
+    assign MYDEFAULTGATEWAY5_o = mydefaultgateway5;
+    assign MYTARGETIPADDR5_o = mytargetipaddr5;
+    assign MYMACADDR5_o = mymacaddr5;
+
+    assign MYIPADDR6_o = myipaddr6;
+    assign MYNETMASK6_o = mynetmask6;
+    assign MYDEFAULTGATEWAY6_o = mydefaultgateway6;
+    assign MYTARGETIPADDR6_o = mytargetipaddr6;
+    assign MYMACADDR6_o = mymacaddr6;
+
+    assign MYIPADDR7_o = myipaddr7;
+    assign MYNETMASK7_o = mynetmask7;
+    assign MYDEFAULTGATEWAY7_o = mydefaultgateway7;
+    assign MYTARGETIPADDR7_o = mytargetipaddr7;
+    assign MYMACADDR7_o = mymacaddr7;
 
     (* keep *) reg [9:0] addra;
     wire [31:0] douta;
@@ -291,6 +363,194 @@ module config_memory_wrapper(
 
 		///////////////////////////////////////////////////
 
+		///////////////////////////////////////////////////
+
+		26: begin
+		    if(douta != 32'h00000000) begin
+			myipaddr4 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		27: begin
+		    if(douta != 32'h00000000) begin
+			mynetmask4 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		28: begin
+		    if(douta != 32'h00000000) begin
+			mydefaultgateway4 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		29: begin
+		    if(douta != 32'h00000000) begin
+			mytargetipaddr4 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		30: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr4[47:16] <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		31: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr4[15:0] <= douta[31:16];
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+
+		///////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////
+
+		32: begin
+		    if(douta != 32'h00000000) begin
+			myipaddr5 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		33: begin
+		    if(douta != 32'h00000000) begin
+			mynetmask5 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		34: begin
+		    if(douta != 32'h00000000) begin
+			mydefaultgateway5 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		35: begin
+		    if(douta != 32'h00000000) begin
+			mytargetipaddr5 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		36: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr5[47:16] <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		37: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr5[15:0] <= douta[31:16];
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+
+		///////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////
+
+		38: begin
+		    if(douta != 32'h00000000) begin
+			myipaddr6 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		39: begin
+		    if(douta != 32'h00000000) begin
+			mynetmask6 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		40: begin
+		    if(douta != 32'h00000000) begin
+			mydefaultgateway6 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		41: begin
+		    if(douta != 32'h00000000) begin
+			mytargetipaddr6 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		42: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr6[47:16] <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		43: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr6[15:0] <= douta[31:16];
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+
+		///////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////
+
+		44: begin
+		    if(douta != 32'h00000000) begin
+			myipaddr7 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		45: begin
+		    if(douta != 32'h00000000) begin
+			mynetmask7 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		46: begin
+		    if(douta != 32'h00000000) begin
+			mydefaultgateway7 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		47: begin
+		    if(douta != 32'h00000000) begin
+			mytargetipaddr7 <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		48: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr7[47:16] <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+		49: begin
+		    if(douta != 32'h00000000) begin
+			mymacaddr7[15:0] <= douta[31:16];
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
+
+		///////////////////////////////////////////////////
+
 		default: begin
 		    // nothing to do
 		end
@@ -310,7 +570,12 @@ module config_memory_wrapper(
 					  .probe8(mynetmask1),
 					  .probe9(mydefaultgateway1),
 					  .probe10(mytargetipaddr1),
-					  .probe11(mymacaddr1)
+					  .probe11(mymacaddr1),
+					  .probe12(myipaddr4),
+					  .probe13(mynetmask4),
+					  .probe14(mydefaultgateway4),
+					  .probe15(mytargetipaddr4),
+					  .probe16(mymacaddr4)
 					  );
 
 endmodule // config_memory_wrapper
