@@ -80,9 +80,6 @@ if __name__ == "__main__":
     elif args.command == 'read':
         ret = client.read_clock(value=args.value)
         print("clock", ret)
-    elif args.command == 'start':
-        ret = client.clear_clock(value=0x1000000000000000)
-        print(r, a)
     elif args.command == 'kick' and len(args.destinations) > 0:
         r, a = client.kick_clock_synch(args.destinations)
         print(r, a)
