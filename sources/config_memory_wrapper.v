@@ -59,19 +59,19 @@ module config_memory_wrapper(
     reg [31:0] mytargetipaddr0 = 32'h0a000001;
     reg [47:0] mymacaddr0 = 48'h001b1affff00;
 
-    reg [31:0] myipaddr1 = 32'h0afd00ff;
+    reg [31:0] myipaddr1 = 32'h0a0400ff;
     reg [31:0] mynetmask1 = 32'hff000000;
     reg [31:0] mydefaultgateway1 = 32'h0a000001;
     reg [31:0] mytargetipaddr1 = 32'h0a000001;
     reg [47:0] mymacaddr1 = 48'h001b1affff01;
 
-    reg [31:0] myipaddr2 = 32'h0afe00ff;
+    reg [31:0] myipaddr2 = 32'h0aff00ff;
     reg [31:0] mynetmask2 = 32'hff000000;
     reg [31:0] mydefaultgateway2 = 32'h0a000001;
     reg [31:0] mytargetipaddr2 = 32'h0a000001;
     reg [47:0] mymacaddr2 = 48'h001b1affff02;
 
-    reg [31:0] myipaddr3 = 32'h0aff00ff;
+    reg [31:0] myipaddr3 = 32'h0afe00ff;
     reg [31:0] mynetmask3 = 32'hff000000;
     reg [31:0] mydefaultgateway3 = 32'h0a000001;
     reg [31:0] mytargetipaddr3 = 32'h0a000001;
@@ -101,25 +101,25 @@ module config_memory_wrapper(
     assign MYTARGETIPADDR3_o = mytargetipaddr3;
     assign MYMACADDR3_o = mymacaddr3;
 
-    reg [31:0] myipaddr4 = 32'h0a0400ff; // dup myipaddr1
+    reg [31:0] myipaddr4 = 32'h0afd00ff;
     reg [31:0] mynetmask4 = 32'hff000000;
     reg [31:0] mydefaultgateway4 = 32'h0a000001;
     reg [31:0] mytargetipaddr4 = 32'h0a000001;
     reg [47:0] mymacaddr4 = 48'h001b1affff04;
 
-    reg [31:0] myipaddr5 = 32'h0aed00ff;
+    reg [31:0] myipaddr5 = 32'h0afc00ff;
     reg [31:0] mynetmask5 = 32'hff000000;
     reg [31:0] mydefaultgateway5 = 32'h0a000001;
     reg [31:0] mytargetipaddr5 = 32'h0a000001;
     reg [47:0] mymacaddr5 = 48'h001b1affff05;
 
-    reg [31:0] myipaddr6 = 32'h0aee00ff;
+    reg [31:0] myipaddr6 = 32'h0afb00ff;
     reg [31:0] mynetmask6 = 32'hff000000;
     reg [31:0] mydefaultgateway6 = 32'h0a000001;
     reg [31:0] mytargetipaddr6 = 32'h0a000001;
     reg [47:0] mymacaddr6 = 48'h001b1affff06;
 
-    reg [31:0] myipaddr7 = 32'h0aef00ff;
+    reg [31:0] myipaddr7 = 32'h0afa00ff;
     reg [31:0] mynetmask7 = 32'hff000000;
     reg [31:0] mydefaultgateway7 = 32'h0a000001;
     reg [31:0] mytargetipaddr7 = 32'h0a000001;

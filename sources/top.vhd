@@ -1331,7 +1331,31 @@ begin
     MYNETMASK3_o => MyNetMask_3,
     MYDEFAULTGATEWAY3_o => DefaultGateway_3,
     MYTARGETIPADDR3_o => TargetIPAddr_3,
-    MYMACADDR3_o => MyMacAddr_3
+    MYMACADDR3_o => MyMacAddr_3,
+
+    MYIPADDR4_o => MyIPAddr_4,
+    MYNETMASK4_o => MyNetMask_4,
+    MYDEFAULTGATEWAY4_o => DefaultGateway_4,
+    MYTARGETIPADDR4_o => TargetIPAddr_4,
+    MYMACADDR4_o => MyMacAddr_4,
+
+    MYIPADDR5_o => MyIPAddr_5,
+    MYNETMASK5_o => MyNetMask_5,
+    MYDEFAULTGATEWAY5_o => DefaultGateway_5,
+    MYTARGETIPADDR5_o => TargetIPAddr_5,
+    MYMACADDR5_o => MyMacAddr_5,
+
+    MYIPADDR6_o => MyIPAddr_6,
+    MYNETMASK6_o => MyNetMask_6,
+    MYDEFAULTGATEWAY6_o => DefaultGateway_6,
+    MYTARGETIPADDR6_o => TargetIPAddr_6,
+    MYMACADDR6_o => MyMacAddr_6,
+
+    MYIPADDR7_o => MyIPAddr_7,
+    MYNETMASK7_o => MyNetMask_7,
+    MYDEFAULTGATEWAY7_o => DefaultGateway_7,
+    MYTARGETIPADDR7_o => TargetIPAddr_7,
+    MYMACADDR7_o => MyMacAddr_7
     );
 
 end RTL;
