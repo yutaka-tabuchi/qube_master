@@ -17,7 +17,9 @@ def main()
                       "time_synch/synch_sender.sv",
                       "time_synch/synch_pkg.vh",
                      ])
-  vivado.add_sources(["sources/e7udpip10g_au200.vhd"])
+  vivado.add_sources(["sources/e7udpip10g_au200.vhd",
+                      "sources/e7udpip10g_au200_dual.vhd"
+                     ])
   vivado.add_sources(["lib/e7udpip10G_independent_clk.edn"])
 
   vivado.add_constraints(["sources/top.xdc"])
@@ -28,7 +30,9 @@ def main()
                       "ipcores/ila_0.xci",
                       "ipcores/ila_1.xci",
                       "ipcores/ila_2.xci",
-                      "ipcores/xxv_ethernet_0.xci"])
+                      "ipcores/xxv_ethernet_0.xci",
+                      "ipcores/xxv_ethernet_1.xci",
+                     ])
   
   #vivado.add_verilog_define({"BOARD_ID" => board_id})
   
@@ -42,5 +46,6 @@ def main()
 end
 
 main()
+
 
 

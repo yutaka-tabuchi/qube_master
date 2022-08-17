@@ -552,7 +552,7 @@ module config_memory_wrapper(
 		///////////////////////////////////////////////////
 
 		default: begin
-		    // nothing to do
+                    if(addra != 0) addra <= addra + 1;
 		end
 	    endcase // case (config_status)
 	end
