@@ -6,3 +6,4 @@
 /create_prj.tcl
 *.edn
 .Xil
+__pycache__/
