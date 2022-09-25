@@ -106,6 +106,7 @@ architecture RTL of command_parser is
   signal state_counter : unsigned(8-1 downto 0);
   signal data_r : std_logic_vector(128-1 downto 0);
   signal synch_sender_kick_w : std_logic;
+  signal time_out_counter : unsigned(32-1 downto 0);
 
   -- ip-cores
   component simple_dualportram
@@ -156,6 +157,7 @@ begin
   state_counter <= (others => '0');
   synch_sender_kick_w <= '0';
   global_clock_clear <= '0';
+  time_out_counter <= (others => '0');
           gupl_state <= input_recv_0;
           gupl_state_next <= command_parser;
           UPL_output_en <= '0';
@@ -175,19 +177,40 @@ begin
 
   -- kick time-synch
   if command(63 downto 56) = X"30" then
+    command <= X"33000000" & X"00000000";
           gupl_state <= send_reply;
   elsif command(63 downto 56) = X"32" then
+    if synch_sender_busy = '0' then -- when not blocked
+      time_out_counter <= (others => '0');
+      command <= X"33000000" & X"00000000";
           gupl_state <= kick_timesynch;
+    else
+      command <= X"FF000000" & X"00000000"; -- reply blocked-error status
+          gupl_state <= send_reply;
+    end if;
   elsif command(63 downto 56) = X"34" then
+    command <= X"33000000" & X"00000000";
           gupl_state <= clear_clock;
   elsif command(63 downto 56) = X"36" then
+    command <= X"37000000" & X"00000000";
           gupl_state <= forward_packet;
   else
     data_recv_words <= (others => '0'); -- don't send data_recv
+    command <= X"33000000" & X"00000000";
           gupl_state <= send_reply;
   end if;
 
         when kick_timesynch =>
+
+  -- time-out mechanism
+  if(time_out_counter = 250*1000*1000) then -- 1sec@250MHz
+          gupl_state <= send_reply;
+    command <= X"FE000000" & X"00000000"; -- reply timeout-error status
+    synch_sender_kick_w <= '0';
+    data_recv_words <= (others => '0'); -- don't send data_recv
+  else
+    time_out_counter <= time_out_counter + 1;
+  end if;
 
   case(to_integer(state_counter)) is
   when 0 =>
@@ -244,8 +267,6 @@ begin
           gupl_state <= forward_input_recv_0;
           gupl_state_next <= send_forward_reply;
         when send_forward_reply =>
-  command(63 downto 56) <= X"37";
-  command(55 downto 0) <= (others => '0');
   payloadBytes <= std_logic_vector(unsigned(fwdPayloadBytes)+16);
   data0 <= fwdDstIpAddr;
   data1 <= X"0000" & fwdDstPort;
@@ -265,8 +286,6 @@ begin
         when send_reply =>
   global_clock_clear <= '0';
   payloadBytes <= X"00000010"; -- 16
-  command(63 downto 56) <= X"33";
-  command(55 downto 0) <= (others => '0');
   data0(31 downto 24) <= global_clock( 7 downto  0);
   data0(23 downto 16) <= global_clock(15 downto  8);
   data0(15 downto  8) <= global_clock(23 downto 16);

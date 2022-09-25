@@ -661,6 +661,16 @@ architecture RTL of top is
       );
   end component command_parser;
 
+  component resetgen
+    generic (
+      RESET_NUM : integer := 3700*1000
+      );
+    port (
+      clk : in std_logic;
+      reset_out : out std_logic
+      );
+  end component resetgen;
+
   signal rx_block_lock_led_0 : std_logic;
   signal rx_block_lock_led_1 : std_logic;
   signal rx_block_lock_led_2 : std_logic;
@@ -674,7 +684,8 @@ architecture RTL of top is
   signal clk100mhz : std_logic;
   signal clk125mhz : std_logic;
   signal clk_locked : std_logic;
-  signal sys_reset : std_logic;
+  signal sys_reset : std_logic := '1';
+  signal sys_reset_125mhz : std_logic := '1';
 
   signal global_clock                  : unsigned(63 downto 0);
   signal global_clock_clear_125mhz     : std_logic;
@@ -732,6 +743,9 @@ architecture RTL of top is
   signal forward_output_req  : std_logic;
   signal forward_output_ack  : std_logic;
 
+  signal pUdp1Receive_Enable_0_d : std_logic := '0';
+  signal synch_sender_soft_reset : std_logic := '0';
+
 begin
 
   QSFP28_0_ACTIVITY_LED <= rx_block_lock_led_0 or
@@ -750,7 +764,14 @@ begin
     clk_in1_p => SYSCLK3_P,
     clk_in1_n => SYSCLK3_N
     );
-  sys_reset <= not clk_locked;
+  resetgen_i : resetgen port map(
+    clk => clk250mhz,
+    reset_out => sys_reset
+    );
+  resetgen_125mhz_i : resetgen port map(
+    clk => clk125mhz,
+    reset_out => sys_reset_125mhz
+    );
 
   ----------------------------------------------------
   -- 10.3.X.X, 16'h4000
@@ -772,42 +793,28 @@ begin
   ----------------------------------------------------
 
   -- ----------------------------------------------------
-  -- -- 10.4.X.X, 16'h4000
-  -- forward_input_data <= pUdp0Receive_Data_1;
-  -- forward_input_req  <= pUdp0Receive_Request_1;
-  -- pUdp0Receive_Ack_1 <= forward_input_ack;
-  -- forward_input_en   <= pUdp0Receive_Enable_1;
+  -- 10.4.X.X, 16'h4000
+  forward_input_data <= pUdp0Receive_Data_1;
+  forward_input_req  <= pUdp0Receive_Request_1;
+  pUdp0Receive_Ack_1 <= forward_input_ack;
+  forward_input_en   <= pUdp0Receive_Enable_1;
   
-  -- pUdp0Send_Data_1    <= forward_output_data;
-  -- pUdp0Send_Request_1 <= forward_output_req;
-  -- forward_output_ack  <= pUdp0Send_Ack_1;
-  -- pUdp0Send_Enable_1  <= forward_output_en;
+  pUdp0Send_Data_1    <= forward_output_data;
+  pUdp0Send_Request_1 <= forward_output_req;
+  forward_output_ack  <= pUdp0Send_Ack_1;
+  pUdp0Send_Enable_1  <= forward_output_en;
   
-  -- -- 10.4.X.X, 16'h4001
-  -- synch_sender_in_data <= pUdp1Receive_Data_1;
-  -- synch_sender_in_req  <= pUdp1Receive_Request_1;
-  -- pUdp1Receive_Ack_1   <= synch_sender_in_ack;
-  -- synch_sender_in_en   <= pUdp1Receive_Enable_1;
+  -- 10.4.X.X, 16'h4001
+  synch_sender_in_data <= pUdp1Receive_Data_1;
+  synch_sender_in_req  <= pUdp1Receive_Request_1;
+  pUdp1Receive_Ack_1   <= synch_sender_in_ack;
+  synch_sender_in_en   <= pUdp1Receive_Enable_1;
 
-  -- pUdp1Send_Data_1     <= synch_sender_out_data;
-  -- pUdp1Send_Request_1  <= synch_sender_out_req;
-  -- synch_sender_out_ack <= pUdp1Send_Ack_1;
-  -- pUdp1Send_Enable_1   <= synch_sender_out_en;
+  pUdp1Send_Data_1     <= synch_sender_out_data;
+  pUdp1Send_Request_1  <= synch_sender_out_req;
+  synch_sender_out_ack <= pUdp1Send_Ack_1;
+  pUdp1Send_Enable_1   <= synch_sender_out_en;
   -- ----------------------------------------------------
-
-  ----------------------------------------------------
-  -- 10.254.X.X, 16'h4000
-  pUdp0Send_Data_1    <= pUdp0Receive_Data_1;
-  pUdp0Send_Request_1 <= pUdp0Receive_Request_1;
-  pUdp0Receive_Ack_1  <= pUdp0Send_Ack_1;
-  pUdp0Send_Enable_1  <= pUdp0Receive_Enable_1;
-  
-  -- 10.254.X.X, 16'h4001
-  pUdp1Send_Data_1    <= pUdp1Receive_Data_1;
-  pUdp1Send_Request_1 <= pUdp1Receive_Request_1;
-  pUdp1Receive_Ack_1  <= pUdp1Send_Ack_1;
-  pUdp1Send_Enable_1  <= pUdp1Receive_Enable_1;
-  ----------------------------------------------------
 
   ----------------------------------------------------
   -- 10.254.X.X, 16'h4000
@@ -838,28 +845,33 @@ begin
   ----------------------------------------------------
 
   ----------------------------------------------------
-  -- 10.4.X.X, 16'h4000
-  forward_input_data <= pUdp0Receive_Data_4;
-  forward_input_req  <= pUdp0Receive_Request_4;
-  pUdp0Receive_Ack_4 <= forward_input_ack;
-  forward_input_en   <= pUdp0Receive_Enable_4;
+  -- 10.254.X.X, 16'h4000
+  pUdp0Send_Data_4    <= pUdp0Receive_Data_4;
+  pUdp0Send_Request_4 <= pUdp0Receive_Request_4;
+  pUdp0Receive_Ack_4  <= pUdp0Send_Ack_4;
+  pUdp0Send_Enable_4  <= pUdp0Receive_Enable_4;
   
-  pUdp0Send_Data_4    <= forward_output_data;
-  pUdp0Send_Request_4 <= forward_output_req;
-  forward_output_ack  <= pUdp0Send_Ack_4;
-  pUdp0Send_Enable_4  <= forward_output_en;
-  
-  -- 10.4.X.X, 16'h4001
-  synch_sender_in_data <= pUdp1Receive_Data_4;
-  synch_sender_in_req  <= pUdp1Receive_Request_4;
-  pUdp1Receive_Ack_4   <= synch_sender_in_ack;
-  synch_sender_in_en   <= pUdp1Receive_Enable_4;
-
-  pUdp1Send_Data_4     <= synch_sender_out_data;
-  pUdp1Send_Request_4  <= synch_sender_out_req;
-  synch_sender_out_ack <= pUdp1Send_Ack_4;
-  pUdp1Send_Enable_4   <= synch_sender_out_en;
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_4    <= pUdp1Receive_Data_4;
+  pUdp1Send_Request_4 <= pUdp1Receive_Request_4;
+  pUdp1Receive_Ack_4  <= pUdp1Send_Ack_4;
+  pUdp1Send_Enable_4  <= pUdp1Receive_Enable_4;
   ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.254.X.X, 16'h4000
+  pUdp0Send_Data_5    <= pUdp0Receive_Data_5;
+  pUdp0Send_Request_5 <= pUdp0Receive_Request_5;
+  pUdp0Receive_Ack_5  <= pUdp0Send_Ack_5;
+  pUdp0Send_Enable_5  <= pUdp0Receive_Enable_5;
+  
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_5    <= pUdp1Receive_Data_5;
+  pUdp1Send_Request_5 <= pUdp1Receive_Request_5;
+  pUdp1Receive_Ack_5  <= pUdp1Send_Ack_5;
+  pUdp1Send_Enable_5  <= pUdp1Receive_Enable_5;
+  ----------------------------------------------------
+
 
   ----------------------------------------------------
   -- 10.255.X.X, 16'h4000
@@ -892,7 +904,7 @@ begin
   process(clk125mhz)
   begin
     if rising_edge(clk125mhz) then
-      if sys_reset = '1' then
+      if sys_reset_125mhz = '1' then
         global_clock <= (others => '0');
       else
         global_clock_clear_125mhz_d <= global_clock_clear_125mhz;
@@ -955,7 +967,7 @@ begin
   synch_sender_i : synch_sender
     port map(
       clk => clk250mhz,
-      reset => sys_reset,
+      reset => sys_reset or synch_sender_soft_reset,
 
       clock_in => global_clock_250mhz,
 
@@ -1029,6 +1041,18 @@ begin
 
   MyUdpPort_3_0    <= X"4000";
   MyUdpPort_3_1    <= X"4001";
+  
+  MyUdpPort_4_0    <= X"4000";
+  MyUdpPort_4_1    <= X"4001";
+
+  MyUdpPort_5_0    <= X"4000";
+  MyUdpPort_5_1    <= X"4001";
+
+  MyUdpPort_6_0    <= X"4000";
+  MyUdpPort_6_1    <= X"4001";
+
+  MyUdpPort_7_0    <= X"4000";
+  MyUdpPort_7_1    <= X"4001";
   
   e7udpip10g_au200_dual_i : e7udpip10g_au200_dual port map(
     gt_rxp_in => gt_rxp_in,
@@ -1357,5 +1381,23 @@ begin
     MYTARGETIPADDR7_o => TargetIPAddr_7,
     MYMACADDR7_o => MyMacAddr_7
     );
+
+  -- force synch_sender reset when UDP1@Port0 receives a pacekt.
+  process(clk250mhz)
+  begin
+    if rising_edge(clk250mhz) then
+      if sys_reset = '1' then
+        synch_sender_soft_reset <= '0';
+        pUdp1Receive_Enable_0_d <= '1';
+      else
+        pUdp1Receive_Enable_0_d <= pUdp1Receive_Enable_0;
+        if pUdp1Receive_Enable_0_d = '0' and pUdp1Receive_Enable_0 = '1' then
+          synch_sender_soft_reset <= '1';
+        else
+          synch_sender_soft_reset <= '0';
+        end if;
+      end if;
+    end if;
+  end process;
 
 end RTL;

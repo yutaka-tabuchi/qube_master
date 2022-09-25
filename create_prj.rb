@@ -11,6 +11,7 @@ def main()
   vivado.set_board("xilinx.com:au200:part0:1.3")
 
   vivado.add_sources(["sources/top.vhd",
+                      "sources/resetgen.v",
                       "sources/command_parser.vhd",
                       "sources/config_memory_wrapper.v",
                       "sources/simple_dualportram.vhd",
