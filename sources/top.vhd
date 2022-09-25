@@ -772,42 +772,28 @@ begin
   ----------------------------------------------------
 
   -- ----------------------------------------------------
-  -- -- 10.4.X.X, 16'h4000
-  -- forward_input_data <= pUdp0Receive_Data_1;
-  -- forward_input_req  <= pUdp0Receive_Request_1;
-  -- pUdp0Receive_Ack_1 <= forward_input_ack;
-  -- forward_input_en   <= pUdp0Receive_Enable_1;
+  -- 10.4.X.X, 16'h4000
+  forward_input_data <= pUdp0Receive_Data_1;
+  forward_input_req  <= pUdp0Receive_Request_1;
+  pUdp0Receive_Ack_1 <= forward_input_ack;
+  forward_input_en   <= pUdp0Receive_Enable_1;
   
-  -- pUdp0Send_Data_1    <= forward_output_data;
-  -- pUdp0Send_Request_1 <= forward_output_req;
-  -- forward_output_ack  <= pUdp0Send_Ack_1;
-  -- pUdp0Send_Enable_1  <= forward_output_en;
+  pUdp0Send_Data_1    <= forward_output_data;
+  pUdp0Send_Request_1 <= forward_output_req;
+  forward_output_ack  <= pUdp0Send_Ack_1;
+  pUdp0Send_Enable_1  <= forward_output_en;
   
-  -- -- 10.4.X.X, 16'h4001
-  -- synch_sender_in_data <= pUdp1Receive_Data_1;
-  -- synch_sender_in_req  <= pUdp1Receive_Request_1;
-  -- pUdp1Receive_Ack_1   <= synch_sender_in_ack;
-  -- synch_sender_in_en   <= pUdp1Receive_Enable_1;
+  -- 10.4.X.X, 16'h4001
+  synch_sender_in_data <= pUdp1Receive_Data_1;
+  synch_sender_in_req  <= pUdp1Receive_Request_1;
+  pUdp1Receive_Ack_1   <= synch_sender_in_ack;
+  synch_sender_in_en   <= pUdp1Receive_Enable_1;
 
-  -- pUdp1Send_Data_1     <= synch_sender_out_data;
-  -- pUdp1Send_Request_1  <= synch_sender_out_req;
-  -- synch_sender_out_ack <= pUdp1Send_Ack_1;
-  -- pUdp1Send_Enable_1   <= synch_sender_out_en;
+  pUdp1Send_Data_1     <= synch_sender_out_data;
+  pUdp1Send_Request_1  <= synch_sender_out_req;
+  synch_sender_out_ack <= pUdp1Send_Ack_1;
+  pUdp1Send_Enable_1   <= synch_sender_out_en;
   -- ----------------------------------------------------
-
-  ----------------------------------------------------
-  -- 10.254.X.X, 16'h4000
-  pUdp0Send_Data_1    <= pUdp0Receive_Data_1;
-  pUdp0Send_Request_1 <= pUdp0Receive_Request_1;
-  pUdp0Receive_Ack_1  <= pUdp0Send_Ack_1;
-  pUdp0Send_Enable_1  <= pUdp0Receive_Enable_1;
-  
-  -- 10.254.X.X, 16'h4001
-  pUdp1Send_Data_1    <= pUdp1Receive_Data_1;
-  pUdp1Send_Request_1 <= pUdp1Receive_Request_1;
-  pUdp1Receive_Ack_1  <= pUdp1Send_Ack_1;
-  pUdp1Send_Enable_1  <= pUdp1Receive_Enable_1;
-  ----------------------------------------------------
 
   ----------------------------------------------------
   -- 10.254.X.X, 16'h4000
@@ -838,28 +824,33 @@ begin
   ----------------------------------------------------
 
   ----------------------------------------------------
-  -- 10.4.X.X, 16'h4000
-  forward_input_data <= pUdp0Receive_Data_4;
-  forward_input_req  <= pUdp0Receive_Request_4;
-  pUdp0Receive_Ack_4 <= forward_input_ack;
-  forward_input_en   <= pUdp0Receive_Enable_4;
+  -- 10.254.X.X, 16'h4000
+  pUdp0Send_Data_4    <= pUdp0Receive_Data_4;
+  pUdp0Send_Request_4 <= pUdp0Receive_Request_4;
+  pUdp0Receive_Ack_4  <= pUdp0Send_Ack_4;
+  pUdp0Send_Enable_4  <= pUdp0Receive_Enable_4;
   
-  pUdp0Send_Data_4    <= forward_output_data;
-  pUdp0Send_Request_4 <= forward_output_req;
-  forward_output_ack  <= pUdp0Send_Ack_4;
-  pUdp0Send_Enable_4  <= forward_output_en;
-  
-  -- 10.4.X.X, 16'h4001
-  synch_sender_in_data <= pUdp1Receive_Data_4;
-  synch_sender_in_req  <= pUdp1Receive_Request_4;
-  pUdp1Receive_Ack_4   <= synch_sender_in_ack;
-  synch_sender_in_en   <= pUdp1Receive_Enable_4;
-
-  pUdp1Send_Data_4     <= synch_sender_out_data;
-  pUdp1Send_Request_4  <= synch_sender_out_req;
-  synch_sender_out_ack <= pUdp1Send_Ack_4;
-  pUdp1Send_Enable_4   <= synch_sender_out_en;
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_4    <= pUdp1Receive_Data_4;
+  pUdp1Send_Request_4 <= pUdp1Receive_Request_4;
+  pUdp1Receive_Ack_4  <= pUdp1Send_Ack_4;
+  pUdp1Send_Enable_4  <= pUdp1Receive_Enable_4;
   ----------------------------------------------------
+
+  ----------------------------------------------------
+  -- 10.254.X.X, 16'h4000
+  pUdp0Send_Data_5    <= pUdp0Receive_Data_5;
+  pUdp0Send_Request_5 <= pUdp0Receive_Request_5;
+  pUdp0Receive_Ack_5  <= pUdp0Send_Ack_5;
+  pUdp0Send_Enable_5  <= pUdp0Receive_Enable_5;
+  
+  -- 10.254.X.X, 16'h4001
+  pUdp1Send_Data_5    <= pUdp1Receive_Data_5;
+  pUdp1Send_Request_5 <= pUdp1Receive_Request_5;
+  pUdp1Receive_Ack_5  <= pUdp1Send_Ack_5;
+  pUdp1Send_Enable_5  <= pUdp1Receive_Enable_5;
+  ----------------------------------------------------
+
 
   ----------------------------------------------------
   -- 10.255.X.X, 16'h4000
