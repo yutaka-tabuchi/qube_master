@@ -13,6 +13,14 @@ entity top is
     gt_txp_out : out std_logic_vector(8-1 downto 0);
     gt_txn_out : out std_logic_vector(8-1 downto 0);
 
+    pci_express_x1_rxn : in  std_logic;
+    pci_express_x1_rxp : in  std_logic;
+    pci_express_x1_txn : out std_logic;
+    pci_express_x1_txp : out std_logic;
+    pcie_perstn        : in  std_logic;
+    pcie_refclk_clk_n  : in  std_logic;
+    pcie_refclk_clk_p  : in  std_logic;
+
     QSFP28_0_ACTIVITY_LED : out std_logic;
     QSFP28_0_STATUS_LEDG  : out std_logic;
     QSFP28_0_STATUS_LEDY  : out std_logic;
@@ -1399,5 +1407,15 @@ begin
       end if;
     end if;
   end process;
+
+  design_1_i : design_1 port map (
+    pci_express_x1_rxn => pci_express_x1_rxn,
+    pci_express_x1_rxp => pci_express_x1_rxp,
+    pci_express_x1_txn => pci_express_x1_txn,
+    pci_express_x1_txp => pci_express_x1_txp,
+    pcie_perstn => pcie_perstn,
+    pcie_refclk_clk_n => pcie_refclk_clk_n,
+    pcie_refclk_clk_p => pcie_refclk_clk_p
+    );
 
 end RTL;

@@ -109,3 +109,14 @@ set_false_path -from [get_clocks -of_objects [get_pins clk_wiz_0_i/inst/mmcme4_a
 set_false_path -from [get_clocks -of_objects [get_pins clk_wiz_0_i/inst/mmcme4_adv_inst/CLKOUT0]] -to [get_clocks -of_objects [get_pins {e7udpip10g_au200_dual_i/xxv_ethernet_1_i/inst/i_xxv_ethernet_1_gt_2/inst/gen_gtwizard_gtye4_top.xxv_ethernet_1_gt_2_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/RXOUTCLK}]]
 set_false_path -from [get_clocks -of_objects [get_pins clk_wiz_0_i/inst/mmcme4_adv_inst/CLKOUT0]] -to [get_clocks -of_objects [get_pins {e7udpip10g_au200_dual_i/xxv_ethernet_1_i/inst/i_xxv_ethernet_1_gt_3/inst/gen_gtwizard_gtye4_top.xxv_ethernet_1_gt_3_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/RXOUTCLK}]]
 
+# PCIe
+create_clock -name pcie_refclk_clk_p -period 10 [get_ports pcie_refclk_clk_p]
+
+set_property PACKAGE_PIN AF1 [get_ports pci_express_x1_rxn];
+set_property PACKAGE_PIN AF2 [get_ports pci_express_x1_rxp];
+set_property PACKAGE_PIN AF6 [get_ports pci_express_x1_txn];
+set_property PACKAGE_PIN AF7 [get_ports pci_express_x1_txp];
+set_property PACKAGE_PIN AM10 [get_ports pcie_refclk_clk_n];
+set_property PACKAGE_PIN AM11 [get_ports pcie_refclk_clk_p];
+
+set_property -dict { PACKAGE_PIN BD21 IOSTANDARD LVCMOS12 } [get_ports pcie_perstn];
