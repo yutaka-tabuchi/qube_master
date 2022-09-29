@@ -149,6 +149,8 @@ module config_memory_wrapper(
     assign MYTARGETIPADDR7_o = mytargetipaddr7;
     assign MYMACADDR7_o = mymacaddr7;
 
+    (* keep *) reg [31:0] VERSION = 32'h20220929;
+
     (* keep *) reg [9:0] addra;
     wire [31:0] douta;
     config_memory config_memory_i (
@@ -548,6 +550,13 @@ module config_memory_wrapper(
 		    config_status <= config_status + 1;
 		    addra <= addra + 1;
 		end
+		50: begin
+		    if(douta != 32'h00000000) begin
+			VERSION <= douta;
+		    end
+		    config_status <= config_status + 1;
+		    addra <= addra + 1;
+		end
 
 		///////////////////////////////////////////////////
 
@@ -575,7 +584,8 @@ module config_memory_wrapper(
 					  .probe13(mynetmask4),
 					  .probe14(mydefaultgateway4),
 					  .probe15(mytargetipaddr4),
-					  .probe16(mymacaddr4)
+					  .probe16(mymacaddr4),
+					  .probe17(VERSION)
 					  );
 
 endmodule // config_memory_wrapper

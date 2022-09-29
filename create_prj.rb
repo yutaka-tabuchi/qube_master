@@ -35,6 +35,8 @@ def main()
                       "ipcores/xxv_ethernet_1.xci",
                      ])
   
+  vivado.add_bd("./scripts/design_1.tcl", "design_1")
+
   #vivado.add_verilog_define({"BOARD_ID" => board_id})
   
   vivado.generate_tcl("create_prj.tcl")

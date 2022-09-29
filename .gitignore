@@ -7,3 +7,5 @@
 *.edn
 .Xil
 __pycache__/
+*.mcs
+*.prm

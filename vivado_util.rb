@@ -20,6 +20,7 @@ class Vivado
     @testbenchs = []
     @ipcores = []
     @verilog_defines = {}
+    @bd = []
   end
 
   def set_target(device)
@@ -62,6 +63,10 @@ class Vivado
     table.each{|k,v| @verilog_defines[k] = v}
   end
 
+  def add_bd(source, name)
+    @bd << [source, name]
+  end 
+
   def _generate_build_tcl(dst)
     @parameters.each{|k,v| dst.puts("set_param #{k} #{v}") }
     dst.puts("set project_dir #{@dir}")
@@ -83,6 +88,13 @@ class Vivado
       dst.puts("add_files -fileset sim_1 -norecurse $sim_files")
     end
     @ipcores.each{|i| dst.puts("import_ip -files #{i}") }
+
+    @bd.each{|bd|
+      dst.puts("source #{bd[0]}")
+      dst.puts("create_bd_design \"#{bd[1]}\"")
+      dst.puts("create_root_design /")
+    }
+
     dst.puts("set_property top #{@top} [current_fileset]")
     dst.puts("update_compile_order -fileset sources_1")
     dst.puts("update_compile_order -fileset sim_1") if @testbenchs.size > 0
