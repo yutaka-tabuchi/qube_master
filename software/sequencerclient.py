@@ -1,4 +1,5 @@
 import sys
+import os
 import argparse
 import socket
 import struct
@@ -11,9 +12,13 @@ class SequencerClient(object):
 
     def __init__(self, ip_addr, port):
         self.__dest_addr = (ip_addr, port)
+        try:
+            bind_host_address = os.environ['UDP_RW_BIND_ADDRESS']
+        except KeyError:
+            bind_host_address = ''
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.settimeout(self.TIMEOUT)
-        self.__sock.bind(('', 0))
+        self.__sock.bind((bind_host_address, 0))
         print('open: {}:{}'.format(ip_addr, port))
 
     def send_recv(self, data):
