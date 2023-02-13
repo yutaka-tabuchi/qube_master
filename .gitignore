@@ -9,3 +9,5 @@
 __pycache__/
 *.mcs
 *.prm
+ram.loc
+_confrom.mmi

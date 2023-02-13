@@ -34,3 +34,11 @@ vivado -mode batch -source ./program_mcs.tcl
 
 When using Vivado Lab 2022.1 and Windows, `program_mcs.bat` is useful.
 
+## Embed Netrork info
+
+```
+ruby ../gen_config.rb < ../device_list.txt
+ruby updatemem.rb resources/config_*
+```
+
+You can get network info embedded bit files in `bin/`. The corresponding `.ltx` file is also copied there.
