@@ -64,6 +64,7 @@ TARGET.each{|mac|
 }
 
 FileUtils.copy(LTXFILE, './bin')
+FileUtils.copy(BITFILE, './bin')
 
 # record updated timestamp
 open("./bin/UPDATE", "w"){|f| f.puts(Time.now.to_s) }
