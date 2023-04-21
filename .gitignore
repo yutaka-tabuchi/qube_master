@@ -11,3 +11,5 @@ __pycache__/
 *.prm
 ram.loc
 _confrom.mmi
+/bin/
+/example/result_send_recv/
