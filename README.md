@@ -10,7 +10,18 @@ ruby create_prj.rb
 vivado -mode batch -source ./create_prj.tcl
 ```
 
-To create mcs file, for example,
+## Embed netrork info into bit-file
+
+```
+pushd ./resources
+ruby ../gen_config.rb < ../device_list.txt
+popd
+ruby updatemem.rb resources/config_*
+```
+
+You can get network info embedded bit files in `bin/`. The corresponding `.ltx` file is also copied there.
+
+To create mcs file, execute the following command.
 
 ```
 vivado -mode batch -source ./create_mcs.tcl
@@ -22,25 +33,16 @@ vivado -mode batch -source ./create_mcs.tcl
 Write bit-file, for exmaple,
 
 ```
-export BIFILE=./prj/qube_master.runs/impl_1/top.bit
+export BITFILE=<TARGET BIT FILE>
+export ADAPTER=<TARGET ADAPTER ID>
 vivado -mode batch -source ./config.tcl
 ```
 
 Write mcs-file, for example,
 
 ```
+export MCSFILE=<TARGET MCS FILE>
+export ADAPTER=<TARGET ADAPTER ID>
 vivado -mode batch -source ./program_mcs.tcl
 ```
 
-When using Vivado Lab 2022.1 and Windows, `program_mcs.bat` is useful.
-
-## Embed Netrork info
-
-```
-pushd ./resources
-ruby ../gen_config.rb < ../device_list.txt
-popd
-ruby updatemem.rb resources/config_*
-```
-
-You can get network info embedded bit files in `bin/`. The corresponding `.ltx` file is also copied there.
