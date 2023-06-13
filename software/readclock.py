@@ -28,7 +28,7 @@ class QuBEMonitor(object):
 
     def read_time(self):
         data = struct.pack('BBBB', 0x00, 0x00, 0x00, 0x04)
-        ret,addr = q.send_recv(data)
+        ret,addr = self.send_recv(data)
         return struct.unpack('>Q', ret[4:12])[0]
 
 if __name__ == "__main__":
