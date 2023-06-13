@@ -9,3 +9,7 @@
 __pycache__/
 *.mcs
 *.prm
+ram.loc
+_confrom.mmi
+/bin/
+/example/result_send_recv/
